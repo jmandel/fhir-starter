@@ -122,7 +122,7 @@ angular.module('fhirStarter').factory('patient', function() {
       var name = p && p.name && p.name[0];
       if (!name) return "Nameless";
 
-      return name.given.join(" ") + name.family.join(" ");
+      return name.given.join(" ") + " " + name.family.join(" ");
     }
   };
 });
