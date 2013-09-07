@@ -1,0 +1,19 @@
+<div class="container settings-dialog" ng-show="showing.settings" ng-controller="SettingsController">
+
+  <div class="span8">Pre-defined servers</div>
+  <div class="span8">
+    <select 
+      ng-model="existing.server" 
+      ng-change="settings = existing.server"
+      ng-options="s.value as s.title for s in servers">
+    </select>
+  </div>
+
+    <div class="span8">
+      <textarea ng-model="settings"></textarea>
+    </div>
+
+  <div class="span8">
+    <button class="btn" ng-click="save()">Save settings</button>
+  </div>
+</div>
