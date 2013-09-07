@@ -61,6 +61,7 @@ angular.module('fhirStarter').controller("SelectPatientController",
 
       $scope.nextPage = function(){
         if (!$scope.hasNext()) return;
+        $scope.loading = true;
         patientSearch.next().then(function(p){
             $scope.patients = p;
         });
@@ -91,6 +92,7 @@ angular.module('fhirStarter').controller("SelectPatientController",
         for (var i=0; i<nBlanks; i++){
           $scope.blanks.push("blankline"); 
         }
+        $scope.loading = false;
         console.log($scope.patients, "Blanks: " + $scope.blanks.length);
       });
 
@@ -105,6 +107,7 @@ angular.module('fhirStarter').controller("SelectPatientController",
       });
 
       $scope.getMore = function(){
+        $scope.loading = true;
         patientSearch.search({
           "tokens": $scope.tokens, 
           "limit": $scope.nPerPage

@@ -17,7 +17,10 @@
   </div>
   <div class="row">
     <div class="span6">
-      <div id="patient-results" ng-cloak>
+      <div id="loading-patient-results" ng-cloak ng-show="loading">
+        Loading results...
+      </div>
+      <div id="patient-results" ng-cloak ng-hide="loading">
         <table class="table table-striped table-hover table-condensed">
           <tr class="patient-row" ng-click="select($index)" ng-repeat="patient in patients">
             <td class="gender" 
