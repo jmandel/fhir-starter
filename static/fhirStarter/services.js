@@ -8,7 +8,7 @@ angular.module('fhirStarter').factory('fhirSettings', function($rootScope) {
     }
   }, {
     name: 'Furore Server (Ewout)',
-    serviceUrl: 'http://hl7connect.healthintersections.com.au/svc/fhir',
+    serviceUrl: 'http://fhir.furore.com/fhir',
     auth: {
       type: 'none'
     }
