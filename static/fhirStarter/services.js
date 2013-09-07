@@ -1,6 +1,18 @@
 angular.module('fhirStarter').factory('fhirSettings', function($rootScope) {
 
   var servers = [{
+    name: 'Health Intersections Server (Grahame)',
+    serviceUrl: 'http://hl7connect.healthintersections.com.au/svc/fhir',
+    auth: {
+      type: 'none'
+    }
+  }, {
+    name: 'Furore Server (Ewout)',
+    serviceUrl: 'http://hl7connect.healthintersections.com.au/svc/fhir',
+    auth: {
+      type: 'none'
+    }
+  }, {
     name: 'Local FHIR dev server',
     serviceUrl: 'http://localhost:9090/fhir',
     auth: {
@@ -15,12 +27,6 @@ angular.module('fhirStarter').factory('fhirSettings', function($rootScope) {
       type: 'basic',
       username: 'client',
       password: 'secret'
-    }
-  }, {
-    name: 'Grahame\'s Test Server',
-    serviceUrl: 'http://hl7connect.healthintersections.com.au/svc/fhir',
-    auth: {
-      type: 'none'
     }
   }];
 
