@@ -63,6 +63,7 @@ angular.module('fhirStarter').controller("SelectPatientController",
         if (!$scope.hasNext()) return;
         $scope.loading = true;
         patientSearch.next().then(function(p){
+            $scope.loading = false;
             $scope.patients = p;
         });
       };
@@ -92,7 +93,6 @@ angular.module('fhirStarter').controller("SelectPatientController",
         for (var i=0; i<nBlanks; i++){
           $scope.blanks.push("blankline"); 
         }
-        $scope.loading = false;
         console.log($scope.patients, "Blanks: " + $scope.blanks.length);
       });
 
@@ -101,20 +101,21 @@ angular.module('fhirStarter').controller("SelectPatientController",
         ($scope.searchterm || "").split(/\s/).forEach(function(t){
           tokens.push(t.toLowerCase());
         });
-
+        $scope.loading = true;
         $scope.tokens = tokens;
         $scope.getMore();
       });
 
-      $scope.getMore = function(){
+      $scope.getMore = _.debounce(function(){
         $scope.loading = true;
         patientSearch.search({
           "tokens": $scope.tokens, 
           "limit": $scope.nPerPage
         }).then(function(p){
+            $scope.loading = false;
             $scope.patients = p;
           });
-      };
+      }, 250);
     }
   );
 
