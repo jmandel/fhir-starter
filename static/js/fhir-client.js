@@ -8839,6 +8839,204 @@ module.exports=require('rUASAf');
 },{}]},{},["rUASAf"])
 ;
 ;(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var process=require("__browserify_process");var $ = jQuery = process.browser ? require('jQuery-browser') : require('jquery');
+var FhirClient = require('./client');
+
+var BBClient = module.exports =  {debug: true}
+
+BBClient.ready = function(callback){
+
+  var oauthResult = window.location.hash.match(/#(.*)/);
+  oauthResult = oauthResult ? oauthResult[1] : "";
+  oauthResult = oauthResult.split(/&/);
+
+  BBClient.authorization = null;
+  BBClient.state = null;
+
+  var authorization = {};
+  for (var i = 0; i < oauthResult.length; i++){
+    var kv = oauthResult[i].split(/=/);
+    if (kv[0].length > 0) {
+      authorization[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1]);
+    }
+  }
+
+  if (Object.keys(authorization).length > 0){
+    BBClient.authorization = authorization;
+    BBClient.state = JSON.parse(localStorage[BBClient.authorization.state]);
+  }
+
+  console.log(BBClient);
+
+  // don't expose hash in the URL while in production mode
+  if (BBClient.debug !== true) {
+    window.location.hash="";
+  }
+
+  var fhirClientParams = BBClient.fhirAuth = {
+    serviceUrl: BBClient.state.provider.bb_api.fhir_service_uri,
+    patientId: BBClient.state.patientId
+  };
+
+  if (BBClient.authorization.access_token !== undefined) {
+    fhirClientParams.auth = {
+      type: 'bearer',
+      token: BBClient.authorization.access_token
+    };
+  }
+  process.nextTick(function(){
+    callback && callback(FhirClient(fhirClientParams))
+  });
+}
+
+BBClient.providers = function(registries, callback){
+
+  var requests = [];
+  jQuery.each(registries, function(i, r){
+    requests.push(jQuery.ajax({
+      type: "GET",
+      url: r+"/.well-known/bb/providers.json"
+    }));
+  });
+
+  var providers = [];
+  jQuery.when.apply(null, requests).then(function(){
+    jQuery.each(arguments, function(responseNum, arg){
+      if (responseNum>=requests.length) {
+        return;
+      }
+      jQuery.each(arg, function(i, provider){
+        providers.push(provider);
+      });
+    });
+    callback && callback(providers);
+  });
+
+};
+
+BBClient.noAuthFhirProvider = function(serviceUrl){
+  return  {
+    "oauth2": null,
+    "bb_api":{
+      "fhir_service_uri": fhirServiceUrl
+    }
+  }
+};
+
+
+BBClient.authorize = function(params){
+
+  var state = Guid.newGuid();
+  params.state = params.state || {};
+
+  if (params.provider.oauth2 == null) {
+
+    jQuery.extend(params.state, {
+      provider: params.provider,
+      patientId: params.patientId
+    });
+
+    if (params.state.patientId === undefined) {
+      throw "For a FHIR server without OAuth, you must supply a patient id " + 
+        "at launch time... otherwise we don't know how to search for data.";
+    }
+
+    localStorage[state] = JSON.stringify(params.state);
+    return window.location.href = client.redirect_uris[0] + "#state="+state;
+  }
+
+  // 1. register to obtain a client_id
+  var post = {
+    type: "POST",
+    headers: {"Authorization" : "Bearer " + params.preregistration_token},
+    contentType: "application/json",
+    url: params.provider.oauth2.registration_uri,
+    data:JSON.stringify(params.client)
+  }
+  if (!params.preregistration_token){
+    delete post.headers;
+  }
+
+  // 2. then authorize to access records
+  jQuery.ajax(post).success(function(client){
+    console.log("Got client", JSON.stringify(client, null,2 ));
+
+    params.state = params.state || {};
+    jQuery.extend(params.state, {
+      client: client,
+      provider: params.provider,
+      patientId: params.patientId
+    });
+
+    localStorage[state] = JSON.stringify(params.state);
+
+    var authScope;
+    if (params.patientId) {
+      authScope = encodeURIComponent("search:"+params.patientId);
+    } else {
+      authScope = client.scope
+    }
+    console.log("sending client reg", params.client);
+
+    var redirect_to=params.provider.oauth2.authorize_uri + "?" + 
+      "client_id="+client.client_id+"&"+
+      "response_type=token&"+
+      "scope="+authScope+"&"+
+      "redirect_uri="+client.redirect_uris[0]+"&"+
+      "state="+state;
+    window.location.href = redirect_to;
+  });
+};
+
+BBClient.summary = function(){
+  return jQuery.ajax({
+    type: "GET",
+    dataType: "text",
+    headers: {"Authorization" : "Bearer " + BBClient.authorization.access_token},
+    url: BBClient.state.provider.bb_api.summary
+  });
+};
+
+var Guid = Guid || (function () {
+
+  var EMPTY = '00000000-0000-0000-0000-000000000000';
+
+  var _padLeft = function (paddingString, width, replacementChar) {
+    return paddingString.length >= width ? paddingString : _padLeft(replacementChar + paddingString, width, replacementChar || ' ');
+  };
+
+  var _s4 = function (number) {
+    var hexadecimalResult = number.toString(16);
+    return _padLeft(hexadecimalResult, 4, '0');
+  };
+
+  var _cryptoGuid = function () {
+    var buffer = new window.Uint16Array(8);
+    window.crypto.getRandomValues(buffer);
+    return [_s4(buffer[0]) + _s4(buffer[1]), _s4(buffer[2]), _s4(buffer[3]), _s4(buffer[4]), _s4(buffer[5]) + _s4(buffer[6]) + _s4(buffer[7])].join('-');
+  };
+
+  var _guid = function () {
+    var currentDateMilliseconds = new Date().getTime();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (currentChar) {
+      var randomChar = (currentDateMilliseconds + Math.random() * 16) % 16 | 0;
+      currentDateMilliseconds = Math.floor(currentDateMilliseconds / 16);
+      return (currentChar === 'x' ? randomChar : (randomChar & 0x7 | 0x8)).toString(16);
+    });
+  };
+
+  var create = function () {
+    var hasCrypto = typeof (window.crypto) != 'undefined',
+    hasRandomValues = typeof (window.crypto.getRandomValues) != 'undefined';
+    return (hasCrypto && hasRandomValues) ? _cryptoGuid() : _guid();
+  };
+
+  return {
+    newGuid: create,
+    empty: EMPTY
+  };})(); 
+
+},{"./client":2,"__browserify_process":9,"jquery":7}],2:[function(require,module,exports){
 var process=require("__browserify_process");var btoa = require('btoa');
 var $ = jQuery = process.browser ? require('jQuery-browser') : require('jquery');
 var parse = require('./parse');
@@ -8847,9 +9045,7 @@ module.exports = FhirClient;
 
 function Search(p) {
 
-  var search = function(){
-    return search.next();
-  };
+  var search = {};
 
   search.client = p.client;
   search.resource = p.resource;
@@ -8974,6 +9170,8 @@ function FhirClient(p) {
       auth: p.auth
     }
 
+    client.patientId = p.patientId;
+
     client.resources = {
       get: function(p) {
         var url = absolute(p.resource + '/@'+p.id, server);
@@ -9059,7 +9257,7 @@ function FhirClient(p) {
       }
     };
 
-    client.lookup = handleReference({
+    client.followSync = handleReference({
       contained: getContained,
       local: getLocal,
     });
@@ -9152,7 +9350,7 @@ function FhirClient(p) {
     return client;
 }
 
-},{"./parse":4,"__browserify_process":8,"btoa":5,"jquery":6}],2:[function(require,module,exports){
+},{"./parse":5,"__browserify_process":9,"btoa":6,"jquery":7}],3:[function(require,module,exports){
 module.exports={
   "Address": {
     "edges": {
@@ -13646,10 +13844,11 @@ module.exports={
   }
 }
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 window.FhirClient = require('./client');
+window.BBClient = require('./bb-client');
 
-},{"./client":1}],4:[function(require,module,exports){
+},{"./bb-client":1,"./client":2}],5:[function(require,module,exports){
 var defs = require('./definitions.json')
 
 module.exports = function(r) {
@@ -13705,7 +13904,7 @@ function parse(r, path, parser) {
   return ret
 }
 
-},{"./definitions.json":2}],5:[function(require,module,exports){
+},{"./definitions.json":3}],6:[function(require,module,exports){
 var Buffer=require("__browserify_Buffer").Buffer;(function () {
   "use strict";
 
@@ -13725,9 +13924,9 @@ var Buffer=require("__browserify_Buffer").Buffer;(function () {
   module.exports = btoa;
 }());
 
-},{"__browserify_Buffer":7}],6:[function(require,module,exports){
+},{"__browserify_Buffer":8}],7:[function(require,module,exports){
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 require=(function(e,t,n,r){function i(r){if(!n[r]){if(!t[r]){if(e)return e(r);throw new Error("Cannot find module '"+r+"'")}var s=n[r]={exports:{}};t[r][0](function(e){var n=t[r][1][e];return i(n?n:e)},s,s.exports)}return n[r].exports}for(var s=0;s<r.length;s++)i(r[s]);return i})(typeof require!=="undefined"&&require,{1:[function(require,module,exports){
 // UTILITY
 var util = require('util');
@@ -17589,7 +17788,7 @@ SlowBuffer.prototype.writeDoubleBE = Buffer.prototype.writeDoubleBE;
 },{}]},{},[])
 ;;module.exports=require("buffer-browserify")
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -17643,5 +17842,5 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}]},{},[3])
+},{}]},{},[4])
 ;

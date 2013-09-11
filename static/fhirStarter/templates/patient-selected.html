@@ -1,18 +1,20 @@
 ﻿<div ng-controller="PatientViewWrapper">
-<div ng-controller="PatientViewController">
-  <h1 class="pull-right"><div class="step-bubble"><span>2</span></div>App time <small>for {{patientHelper.name(patient)}}</small></h1>
-  <br style="clear: both;" />
-  <div class="row-fluid">
-    <ul class="thumbnails">
-      <li class="span3" ng-repeat="app in all_apps">
+  <div ng-controller="PatientViewController">
+    <h1 class="pull-right"><div class="step-bubble"><span>2</span></div>App time <small>for {{patientHelper.name(patient)}}</small></h1>
+    <br style="clear: both;" />
+    <div class="row-fluid">
+      <ul class="thumbnails">
+        <li class="span3" ng-repeat="app in all_apps">
         <div class="thumbnail">
-          <img ng-src="{{app.icon}}">
+          <div class="thumb-holder">
+            <img ng-src="{{app.logo_uri}}">
+          </div>
           <div class="caption">
-            <a ng-href="{{app.launch_uri}}?fhirServer={{fhirServer}}&patient-pseudo-id={{patientHelper.id(patient).id}}" target="_blank" class="btn btn-block btn-primary">{{app.client_name}}</a>
+            <a ng-href="{{app.launch_uri}}?fhirServiceUrl={{fhirServiceUrl}}&patientId={{patientHelper.id(patient).id}}" target="_blank" class="btn btn-block btn-primary">{{app.client_name}}</a>
           </div>
         </div>
-      </li>
-    </ul>
+        </li>
+      </ul>
+    </div>
   </div>
-</div>
 </div>

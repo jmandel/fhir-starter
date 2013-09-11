@@ -155,17 +155,18 @@ angular.module('fhirStarter').factory('app', ['$http',function($http) {
     getApps: function(){
       return [
         {
-          "client_name": "Growth-tastic",
-          "client_uri": "http://growth.bluebuttonpl.us",
-          "launch_uri": "http://localhost:3000/launch",
-          "logo_uri": "http://growth.bluebuttonpl.us/static/growth_charts/img/icon.png",
-          "contacts": [ "info@growth.bluebuttonpl.us" ],
-          "redirect_uris": [ "http://growth-pull.bluebuttonpl.us/static/growth_charts/" ],
-            "response_types": ["token"],
-            "grant_types": ["implicit"],
-            "token_endpoint_auth_method": "none",
-            "scope":  "summary"
-        }  
+          "client_name": "Cardiac Risk",
+          "launch_uri": "./apps/cardiac-risk/launch.html",
+          "logo_uri": "http://smartplatforms.org/wp-content/uploads/2012/09/cardiac-risk-216x300.png"
+        }, {
+          "client_name": "Growth Chart",
+          "launch_uri": "./apps/growth-chart/launch.html",
+          "logo_uri": "http://smartplatforms.org/wp-content/uploads/pgc-male-healthyweight-os.png"
+        }, {
+          "client_name": "BP Centiles",
+          "launch_uri": "./apps/bp-centiles/launch.html",
+          "logo_uri": "http://vectorblog.org/wp-content/uploads/2012/09/BP-Centiles-screengrab-300x211.jpg"
+        }
       ]
     }
   };
