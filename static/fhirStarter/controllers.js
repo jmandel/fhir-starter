@@ -26,8 +26,8 @@ angular.module('fhirStarter').controller("SettingsController",
     $scope.oauth = function(){
       var client = {
         "client_name": "SMART FHIR Starter",
-        "client_uri": "http://smartplatforms.org/smart-app-gallery/cardiac-risk/",
-        "logo_uri": "http://smartplatforms.org/wp-content/uploads/2012/09/cardiac-risk-216x300.png",
+        "client_uri": "https://github.com/jmandel/fhir-starter",
+        "logo_uri": "http://wiki.hl7.org/images/1/15/FHIR.png",
         "contacts": [ "info@smartplatforms.org" ],
         "redirect_uris": [window.location.origin + window.location.pathname],
         "response_types": ["token"],
@@ -39,14 +39,14 @@ angular.module('fhirStarter').controller("SettingsController",
       var provider = {
         "name": "Local Testing Hospital",
         "description": "Just on a developer's machine",
-        "url": "http://localhost:8080/openid-connect-server",
+        "url": "http://bbplus-ri.aws.af.cm",
         "oauth2": {
-          "registration_uri": "http://localhost:8080/openid-connect-server/register",
-          "authorize_uri": "http://localhost:8080/openid-connect-server/authorize",
-          "token_uri": "http://localhost:8080/openid-connect-server/token"
+          "registration_uri": "http://bbplus-ri.aws.af.cm/register",
+          "authorize_uri": "http://bbplus-ri.aws.af.cm/authorize",
+          "token_uri": "http://bbplus-ri.aws.af.cm/token"
         },
         "bb_api":{
-          "fhir_service_uri": "http://localhost:9090/fhir"
+          "fhir_service_uri": "https://fhir.aws.af.cm/fhir"
         }
       };
 

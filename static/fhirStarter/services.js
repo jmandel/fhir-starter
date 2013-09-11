@@ -1,6 +1,14 @@
 angular.module('fhirStarter').factory('fhirSettings', function($rootScope) {
 
   var servers = [{
+    name: 'SMART on FHIR',
+    serviceUrl: 'https://fhir.aws.af.cm/fhir',
+    auth: {
+      type: 'basic',
+      username: 'client',
+      password: 'secret'
+    }
+  }, {
     name: 'Health Intersections Server (Grahame)',
     serviceUrl: 'http://hl7connect.healthintersections.com.au/svc/fhir',
     auth: {
