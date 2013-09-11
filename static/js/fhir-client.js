@@ -8861,12 +8861,13 @@ BBClient.ready = function(callback){
     }
   }
 
-  if (Object.keys(authorization).length > 0){
+  if (Object.keys(authorization).length > 0 && authorization.state){
     BBClient.authorization = authorization;
     BBClient.state = JSON.parse(localStorage[BBClient.authorization.state]);
+  } else {
+    return;
   }
 
-  if (!BBClient.state) return;
   console.log(BBClient);
 
   // don't expose hash in the URL while in production mode
