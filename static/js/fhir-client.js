@@ -8866,6 +8866,7 @@ BBClient.ready = function(callback){
     BBClient.state = JSON.parse(localStorage[BBClient.authorization.state]);
   }
 
+  if (!BBClient.state) return;
   console.log(BBClient);
 
   // don't expose hash in the URL while in production mode
