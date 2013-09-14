@@ -1,8 +1,8 @@
 angular.module('fhirStarter').factory('fhirSettings', function($rootScope) {
 
   var servers = [{
-    name: 'SMART on FHIR',
-    serviceUrl: 'https://fhir.aws.af.cm/fhir',
+    name: 'SMART on FHIR (fhir.me)',
+    serviceUrl: 'https://api.fhir.me/fhir',
     auth: {
       type: 'basic',
       username: 'client',
