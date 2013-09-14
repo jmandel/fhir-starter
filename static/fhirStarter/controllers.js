@@ -46,7 +46,7 @@ angular.module('fhirStarter').controller("SettingsController",
           "token_uri": "http://bbplus-ri.aws.af.cm/token"
         },
         "bb_api":{
-          "fhir_service_uri": "https://fhir.aws.af.cm/fhir"
+          "fhir_service_uri": "https://api.fhir.me/fhir"
         }
       };
 
