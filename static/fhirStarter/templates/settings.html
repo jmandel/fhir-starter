@@ -1,5 +1,6 @@
 <div class="container settings-dialog" ng-show="showing.settings" ng-controller="SettingsController">
 
+
   <div class="span8">Test servers to try</div>
   <div class="span8">
     <select 
@@ -15,10 +16,18 @@
 
   <div class="span8">
     <button class="btn" ng-click="save()">Save settings</button>
+
+    <button class="btn" 
+      ng-click="showing.settings=false"
+      click-on-key="27"
+      >Cancel</button>
   </div>
 
   <div class="span8">
-    <button class="btn" ng-click="oauth()">Connect via OAuth2</button>
+    <h4 ng-click="oauth()">
+            <button class="btn oauth">Connect to api.fhir.me via OAuth2</button>
+    </h4>
   </div>
+
 
 </div>

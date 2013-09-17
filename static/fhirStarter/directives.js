@@ -22,22 +22,17 @@ angular.module('fhirStarter').directive('focusOnKey', function() {
 angular.module('fhirStarter').directive('clickOnKey', function() {
   var keyToElement = { };
   var listener = function(e){
-    if (!e.altKey){return;}
-    if (keyToElement[e.keyCode]){ 
-      var a = angular.element(document.activeElement);
-      /*
-      if (-1 !== ["TEXTAREA", "INPUT"].indexOf(a.prop("tagName"))){
-      return;
-      }
-      */
-      keyToElement[e.keyCode].click();
+    var code = e.keyCode;
+    if (e.altKey) code = "alt_"+code;
+    if (keyToElement[code]){ 
+      keyToElement[code].click();
       e.preventDefault();
       e.stopPropagation();
     }
   };
   angular.element(document).on("keyup", listener);
   return function(scope, elm, attrs) {
-    var allowedKeys = scope.$eval(attrs.clickOnKey);
+    var allowedKeys = attrs.clickOnKey;
     if (!angular.element.isArray(allowedKeys)){
       allowedKeys = [allowedKeys];
     }

@@ -4,23 +4,23 @@
   </div>
   <div class="row">
     <div class="span6">
-        <input 
-        id="patient-search" 
-        class="span6 pull-left input-long " 
-        type="text" 
-        autofocus 
-        contenteditable 
-        focus-on-key="191" 
-        ng-model="searchterm" 
-        placeholder="john smith ..."></input>
+      <input 
+      id="patient-search" 
+      class="span6 pull-left input-long " 
+      type="text" 
+      autofocus 
+      contenteditable 
+      focus-on-key="191" 
+      ng-model="searchterm" 
+      placeholder="john smith ..."></input>
     </div>
   </div>
   <div class="row">
     <div class="span6">
-      <div id="loading-patient-results" ng-cloak ng-show="loading">
-        Loading results...
-      </div>
-      <div id="patient-results" ng-cloak ng-hide="loading">
+        <div id="loading-patient-results" ng-cloak ng-show="loading">
+          <h2>Loading results...</h2>
+        </div>
+      <div id="patient-results" ng-cloak ng-class="{loading:loading}">
         <table class="table table-striped table-hover table-condensed">
           <tr class="patient-row" ng-click="select($index)" ng-repeat="patient in patients">
             <td class="gender" 
@@ -43,13 +43,13 @@
 
         <ul class="pager">
           <li class="previous pull-left" 
-          click-on-key="80"
+          click-on-key="alt_80"
           ng-class="{true:'',false:'disabled'}[hasPrevious()]"
           ng-click="previousPage()">
           <a><span class="shortcut">P</span>revious {{nPerPage}}</a>
           </li>
           <li class="next  pull-right" 
-          click-on-key="78"
+          click-on-key="alt_78"
           ng-class="{true:'',false:'disabled'}[hasNext()]"
           ng-click="nextPage()">
           <a><span class="shortcut">N</span>ext {{nPerPage}}</a></li>
