@@ -23,9 +23,15 @@
     </script>
 
     <style type="text/css">
-      #loading-patient-results: {-webkit-filter: none;}
+      #loading-patient-results {
+        position: absolute;
+        top:0px;
+      }
       .loading *{
-        -webkit-filter: blur(1px) opacity(0.6);
+        opacity: 0.6;
+      }
+      div.result {
+        position: relative;
       }
       body {
         padding-top: 60px;
