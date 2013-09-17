@@ -2,7 +2,7 @@ angular.module('fhirStarter').factory('fhirSettings', function($rootScope) {
 
   var servers = [{
     name: 'SMART on FHIR (fhir.me)',
-    serviceUrl: 'https://api.fhir.me/fhir',
+    serviceUrl: 'https://api.fhir.me',
     auth: {
       type: 'basic',
       username: 'client',
@@ -22,7 +22,7 @@ angular.module('fhirStarter').factory('fhirSettings', function($rootScope) {
     }
   }, {
     name: 'Local FHIR dev server',
-    serviceUrl: 'http://localhost:9090/fhir',
+    serviceUrl: 'http://localhost:9090',
     auth: {
       type: 'basic',
       username: 'client',
@@ -30,7 +30,7 @@ angular.module('fhirStarter').factory('fhirSettings', function($rootScope) {
     }
   }, {
     name: 'Local FHIR Tomcat server',
-    serviceUrl: 'http://localhost:8080/fhir-server/fhir',
+    serviceUrl: 'http://localhost:8080/fhir-server',
     auth: {
       type: 'basic',
       username: 'client',
