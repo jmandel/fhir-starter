@@ -69,105 +69,107 @@ angular.module('fhirStarter').controller("SettingsController",
     }
   );
 
-  angular.module('fhirStarter').controller("SelectPatientController",  
-
+  angular.module('fhirStarter').controller("PatientSearchController",  
     function($scope, patient, patientSearch, $routeParams, $rootScope, $location) {
+
       $scope.onSelected = function(p){
-        var pid = patient.id(p).id,
-        loc = "/ui/patient-selected/"+pid;
-        $location.url(loc);
+        var pid = patient.id(p).id;
+        var loc = "/ui/patient-selected/"+pid;
+        $location.search("q", $scope.searchterm);
+        var off = $rootScope.$on("$routeUpdate", function(){
+          $location.url(loc);
+          off();
+        });
+
       };
+
+      $scope.patientHelper = patient;
+      $scope.loading = true;
+      $scope.patients = [];
+      $scope.nPerPage = 10;
+      $scope.genderglyph = {"F" : "&#9792;", "M": "&#9794;"};
+      $scope.searchterm  = typeof $routeParams.q ==="string" && $routeParams.q || "";
+
+      $rootScope.$on('new-settings', function(){
+        console.log("redo search with new settings");
+        $scope.getMore();
+      })
+
+      $scope.nextPage = function(){
+        if (!$scope.hasNext()) return;
+        $scope.loading = true;
+        patientSearch.next().then(function(p){
+          $scope.loading = false;
+          $scope.patients = p;
+        });
+      };
+
+      $scope.previousPage = function(){
+        if (!$scope.hasPrevious()) return;
+        $scope.patients = patientSearch.previous();
+      };
+
+      $scope.select = function(i){
+        console.log("select called", i);
+        $scope.onSelected($scope.patients[i]);
+      };
+
+
+      $scope.hasPrevious = function(){
+        return patientSearch.atPage() > 0
+      };
+
+      $scope.hasNext = function(){
+        return $scope.patients.length === $scope.nPerPage;
+      };
+
+      $scope.$watch("patients", function(p){
+        var nBlanks = $scope.nPerPage - $scope.patients.length;
+        $scope.blanks = [];
+        for (var i=0; i<nBlanks; i++){
+          $scope.blanks.push("blankline"); 
+        }
+        console.log($scope.patients, "Blanks: " + $scope.blanks.length);
+      });
+
+      $scope.$watch("searchterm", function(){
+        var tokens = [];
+        ($scope.searchterm || "").split(/\s/).forEach(function(t){
+          tokens.push(t.toLowerCase());
+        });
+        $scope.tokens = tokens;
+        $scope.getMore();
+      });
+
+      var loadCount = 0;
+      var search = _.debounce(function(thisLoad){
+        patientSearch.search({
+          "tokens": $scope.tokens, 
+          "limit": $scope.nPerPage
+        }).then(function(p){
+          if (thisLoad < loadCount) {
+            return;
+          }
+          $scope.loading = false;
+          $scope.patients = p;
+        });
+      }, 300);
+
+      $scope.getMore = function(){
+        $scope.loading = true;
+        search(++loadCount);
+      };
+
     });
 
-    angular.module('fhirStarter').controller("PatientSearchController",  
-      function($scope, patient, patientSearch, $routeParams, $rootScope, $location) {
-        $scope.patientHelper = patient;
-        $scope.loading = true;
-        $scope.patients = [];
-        $scope.nPerPage = 10;
-        $scope.genderglyph = {"F" : "&#9792;", "M": "&#9794;"};
-        $scope.searchterm  = typeof $routeParams.q ==="string" && $routeParams.q || "";
 
-        $rootScope.$on('new-settings', function(){
-          console.log("redo search with new settings");
-          $scope.getMore();
-        })
+    angular.module('fhirStarter').controller("PatientViewController", function($scope, patient, app, patientSearch, $routeParams, $rootScope, $location, fhirSettings) {
+      $scope.all_apps = app.getApps();
+      $scope.patientHelper = patient;
+      $scope.fhirServiceUrl = fhirSettings.get().serviceUrl
 
-        $scope.nextPage = function(){
-          if (!$scope.hasNext()) return;
-          $scope.loading = true;
-          patientSearch.next().then(function(p){
-            $scope.loading = false;
-            $scope.patients = p;
-          });
-        };
+      $scope.givens = function(name) {
+        return name && name.givens.join(" ");
+      };
 
-        $scope.previousPage = function(){
-          if (!$scope.hasPrevious()) return;
-          $scope.patients = patientSearch.previous();
-        };
-
-        $scope.select = function(i){
-          console.log("select called", i);
-          $scope.onSelected($scope.patients[i]);
-        };
-
-
-        $scope.hasPrevious = function(){
-          return patientSearch.atPage() > 0
-        };
-
-        $scope.hasNext = function(){
-          return $scope.patients.length === $scope.nPerPage;
-        };
-
-        $scope.$watch("patients", function(p){
-          var nBlanks = $scope.nPerPage - $scope.patients.length;
-          $scope.blanks = [];
-          for (var i=0; i<nBlanks; i++){
-            $scope.blanks.push("blankline"); 
-          }
-          console.log($scope.patients, "Blanks: " + $scope.blanks.length);
-        });
-
-        $scope.$watch("searchterm", function(){
-          var tokens = [];
-          ($scope.searchterm || "").split(/\s/).forEach(function(t){
-            tokens.push(t.toLowerCase());
-          });
-          $scope.tokens = tokens;
-          $scope.getMore();
-        });
-
-        var loadCount = 0;
-        var search = _.debounce(function(thisLoad){
-          patientSearch.search({
-            "tokens": $scope.tokens, 
-            "limit": $scope.nPerPage
-          }).then(function(p){
-            if (thisLoad < loadCount) {
-              return;
-            }
-            $scope.loading = false;
-            $scope.patients = p;
-          });
-        }, 300);
-
-        $scope.getMore = function(){
-          $scope.loading = true;
-          search(++loadCount);
-        };
-
-      });
-
-
-      angular.module('fhirStarter').controller("PatientViewController", function($scope, patient, app, patientSearch, $routeParams, $rootScope, $location, fhirSettings) {
-        $scope.all_apps = app.getApps();
-        $scope.patientHelper = patient;
-        $scope.fhirServiceUrl = fhirSettings.get().serviceUrl
-
-        $scope.givens = function(name) {
-          return name && name.givens.join(" ");
-        };
-
-      });
+    });
