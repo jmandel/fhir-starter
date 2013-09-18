@@ -1,0 +1,6 @@
+<div class="container settings-dialog" ng-show="errors.length > 0" ng-controller="ErrorsController">
+
+  <div class="span8"><h3>Errors</h3></div>
+  <div ng-repeat="e in errors" ng-click="clearError($index)" class="span8">{{e}} [X]</div>
+
+</div>
