@@ -16,7 +16,7 @@ angular.module('fhirStarter').factory('fhirSettings', function($rootScope) {
     }
   }, {
     name: 'Furore Server (Ewout)',
-    serviceUrl: 'http://fhir.furore.com/fhir',
+    serviceUrl: 'http://spark.furore.com/fhir',
     auth: {
       type: 'none'
     }
