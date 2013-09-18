@@ -122,7 +122,20 @@ angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, 
       return d.promise;
     },
     getOne: function(pid){
-      return fhir.resources.get({resource: 'patient', id: pid})
+      // If it's already in our resource cache, return it.
+      // Otherwise fetch a new copy and return that.
+      d = $q.defer();
+      var p = fhir.resources.get({resource:'patient', id:pid});
+      if (p !== null) {
+        d.resolve(p);
+        return d.promise;
+      }
+      fhir.get({resource: 'patient', id: pid})
+      .done(function(p){
+        d.resolve(p);
+        $rootScope.$digest();
+      });
+      return d.promise;
     }  
   };
 });
@@ -134,7 +147,7 @@ angular.module('fhirStarter').factory('patient', function() {
     },
     name: function(p){
       var name = p && p.name && p.name[0];
-      if (!name) return "Nameless";
+      if (!name) return null;
 
       return name.given.join(" ") + " " + name.family.join(" ");
     }

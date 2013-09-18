@@ -58,7 +58,11 @@ angular.module('fhirStarter').controller("SettingsController",
 
   angular.module('fhirStarter').controller("PatientViewWrapper",  
     function($scope, $routeParams, patientSearch) {
-      $scope.patient = patientSearch.getOne($routeParams.pid);
+      $scope.loading = true;
+      patientSearch.getOne($routeParams.pid).then(function(p){
+        $scope.loading = false;
+        $scope.patient = p;
+      });
       $scope.patientId = function(){
         return $routeParams.pid;
       };
@@ -157,76 +161,10 @@ angular.module('fhirStarter').controller("SettingsController",
       });
 
 
-      angular.module('fhirStarter').controller("AuthorizeAppController",  
-        function($scope, authorization, patient, patientSearch, $routeParams, $rootScope, $location) {
-          $scope.patientHelper = patient;
-          $scope.patientName = "(choose below)";
-
-          $scope.onSelected = function(p){
-            $scope.patient = p;
-            $scope.patientName = patient.name(p) ;
-            console.log("selecteD", p);
-          };
-
-          $scope.requestedScope = function(){
-            if (!$scope.txn) {
-              return null;
-            }
-            if (!$scope.txn.req.scope) {
-              return "patient" // default scope
-            }
-            if ($scope.txn && $scope.txn.req.scope.indexOf("patient") !== -1){
-              return "patient";
-            }
-            if ($scope.txn && $scope.txn.req.scope.indexOf("user") !== -1){
-              return "user";
-            }
-            throw "Unrecognized scope";
-          };
-
-          $scope.needPatient = function(){
-            return ($scope.requestedScope() === "patient" && 
-            $scope.txn.req.patient === undefined);
-          };
-
-          $scope.decide = function(allow){
-            var params = {};
-            if ($scope.patient){
-              params.patient = patient.id($scope.patient);
-            }
-            authorization.decide($scope.txn, allow, params);
-          };
-
-          $scope.allow = function(){
-            $scope.decide(true);
-          };
-
-          $scope.deny = function(){
-            $scope.decide(false);
-          };
-
-          authorization.transactionDetails($location.search().transaction_id)
-          .success(function(t){
-            $scope.txn = t;
-            if (t.req.patient) {
-              patientSearch.getOne(t.req.patient).success(function(p){
-                $scope.patient = p;
-                $scope.onSelected(p);
-                $scope.$apply();
-              });
-            };
-            $scope.$apply();
-          });
-
-        }
-      );
       angular.module('fhirStarter').controller("PatientViewController", function($scope, patient, app, patientSearch, $routeParams, $rootScope, $location, fhirSettings) {
         $scope.all_apps = app.getApps();
         $scope.patientHelper = patient;
         $scope.fhirServiceUrl = fhirSettings.get().serviceUrl
-        $scope.patientView = function() {
-          return ($scope.patient && angular.toJson($scope.patient, true));
-        };
 
         $scope.givens = function(name) {
           return name && name.givens.join(" ");
