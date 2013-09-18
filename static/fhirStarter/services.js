@@ -45,7 +45,6 @@ angular.module('fhirStarter').factory('fhirSettings', function($rootScope) {
     servers: servers,
     get: function(){return settings;},
     set: function(s){
-      console.log("set called on", s);
       settings = s;
       localStorage.fhirSettings = JSON.stringify(settings);
       $rootScope.$emit('new-settings');
@@ -59,7 +58,6 @@ angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, 
   var fhir;
 
   function  setup(){
-    console.log("Create new fhir client object", fhirSettings.get());
     fhir = new FhirClient(fhirSettings.get());
   }
 
@@ -92,8 +90,10 @@ angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, 
         d.resolve(r)
         $rootScope.$digest();
       }).fail(function(){
+        $rootScope.$emit('error', 'Search failed (see console)');
+        console.log("Search failed.");
         console.log(arguments);
-        alert("Search failed.");
+        $rootScope.$digest();
       });
       return d.promise;
     },

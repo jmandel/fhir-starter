@@ -30,7 +30,7 @@
             </td>
             <td><i><span ng-bind="patient.birthDate | date"/></i></td>
             </tr>
-            <tr ng-repeat="blank in blanks">
+            <tr ng-repeat="blank in blanks track by $index">
               <td class="gender"></td>
               <td colspan="2">
                 <span ng-show="(patients.length==0) && $first">

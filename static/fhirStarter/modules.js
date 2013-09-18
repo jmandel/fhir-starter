@@ -1,4 +1,4 @@
-angular.module('fhirStarter', ['ngSanitize'], function($routeProvider, $locationProvider){
+angular.module('fhirStarter', ['ngRoute','ngSanitize'], function($routeProvider, $locationProvider){
 
   $routeProvider.when('/ui/select-patient', {
     templateUrl:'fhirStarter/templates/select-patient.html',
