@@ -5,7 +5,7 @@ angular.module('fhirStarter', ['ngRoute','ngSanitize'], function($routeProvider,
     reloadOnSearch:false
   }) 
 
-  $routeProvider.when('', {redirectTo:'/ui/select-patient'});
+  $routeProvider.when('/', {redirectTo:'/ui/select-patient'});
 
   $routeProvider.when('/ui/patient-selected/:pid', {
     templateUrl:'fhirStarter/templates/patient-selected.html',
