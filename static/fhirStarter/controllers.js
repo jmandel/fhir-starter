@@ -88,6 +88,9 @@ angular.module('fhirStarter').controller("ErrorsController",
         $scope.onSelected = function(p){
           var pid = patient.id(p).id;
           var loc = "/ui/patient-selected/"+pid;
+          if ($routeParams.q == $scope.searchterm) {
+            return $location.url(loc); 
+          }
           $location.search("q", $scope.searchterm);
           var off = $rootScope.$on("$routeUpdate", function(){
             $location.url(loc);
