@@ -99,9 +99,14 @@ angular.module('fhirStarter').controller("ErrorsController",
 
         };
 
+        $scope.setLoading = function(){
+          $scope.patients = [];
+          $scope.loading = true;
+        };
+        $scope.setLoading();
+
+
         $scope.patientHelper = patient;
-        $scope.loading = true;
-        $scope.patients = [];
         $scope.nPerPage = 10;
         $scope.genderglyph = {"F" : "&#9792;", "M": "&#9794;"};
         $scope.searchterm  = typeof $routeParams.q ==="string" && $routeParams.q || "";
@@ -112,7 +117,7 @@ angular.module('fhirStarter').controller("ErrorsController",
 
         $scope.nextPage = function(){
           if (!$scope.hasNext()) return;
-          $scope.loading = true;
+          $scope.setLoading();
           patientSearch.next().then(function(p){
             $scope.loading = false;
             $scope.patients = p;
@@ -169,7 +174,7 @@ angular.module('fhirStarter').controller("ErrorsController",
         }, 300);
 
         $scope.getMore = function(){
-          $scope.loading = true;
+          $scope.setLoading();
           search(++loadCount);
         };
 

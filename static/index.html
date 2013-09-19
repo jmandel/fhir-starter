@@ -23,14 +23,59 @@
     </script>
 
     <style type="text/css">
+
       #loading-patient-results {
         position: absolute;
         z-index:2;
         top:0px;
       }
-      .loading *{
-        opacity: 0.6;
+
+      .loading {
       }
+
+      .loading-add{
+        -moz-animation: .3s fade-box;
+        -webkit-animation: .3s fade-box;
+        animation: .3s fade-box;
+      }
+
+      @keyframes fade-box {
+        0% {opacity: 1;  }
+        50% {opacity: 0;  }
+        100% {opacity: 1;  }
+      }
+
+      @-webkit-keyframes fade-box {
+        0% {opacity: 1;  }
+        50% {opacity: 0;  }
+        100% {opacity: 1;  }
+      }
+      @-o-keyframes fade-box {
+        0% {opacity: 1;  }
+        50% {opacity: 0;  }
+        100% {opacity: 1;  }
+      }
+      @-moz-keyframes fade-box {
+        0% {opacity: 1;  }
+        50% {opacity: 0;  }
+        100% {opacity: 1;  }
+      }
+
+
+      #loading-patient-results.ng-hide-remove{
+        display:block!important;
+        -webkit-transition:0.3s linear all;
+        -moz-transition:0.3s linear all;
+        -o-transition:0.3s linear all;
+        transition:0.3s linear all;
+        transition-delay: 0.5s;
+        opacity: 0;
+      }
+
+      #loading-patient-results.ng-hide-remove-active{
+        opacity: 1.0
+      }
+
       div.result {
         position: relative;
       }
@@ -173,6 +218,7 @@
   <script src="angular/angular.js"></script>
   <script src="angular/angular-route.js"></script>
   <script src="angular/angular-sanitize.js"></script>
+  <script src="angular/angular-animate.js"></script>
   <script src="fhirStarter/modules.js"></script>
   <script src="fhirStarter/controllers.js"></script>
   <script src="fhirStarter/services.js"></script>
