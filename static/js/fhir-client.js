@@ -9272,6 +9272,7 @@ function FhirClient(p) {
 
     client.indexFeed = function(atomResult) {
       var ret = [];
+      atomResult = atomResult.feed || atomResult;
       atomResult.entry.forEach(function(e){
         var more = client.indexResource(e.id, e.content);
         [].push.apply(ret, more);

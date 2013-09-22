@@ -81,7 +81,7 @@ angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, 
       d = $q.defer();
       fhir.search({
         resource: 'patient',
-        searchTerms: {name: p.tokens.map(function(t){return '"'+t+'"'}), sort: "family"},
+        searchTerms: {name: p.tokens, sort: "family"},
         count: 10
       }).done(function(r, search){
         currentSearch = search;
