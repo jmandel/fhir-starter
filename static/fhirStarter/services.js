@@ -80,8 +80,8 @@ angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, 
     search: function(p){
       d = $q.defer();
       fhir.search({
-        resource: 'patient',
-        searchTerms: {name: p.tokens, sort: "family"},
+        resource: 'Patient',
+        searchTerms: {name: p.tokens, _sort: ["family","given"]},
         count: 10
       }).done(function(r, search){
         currentSearch = search;
@@ -125,12 +125,12 @@ angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, 
       // If it's already in our resource cache, return it.
       // Otherwise fetch a new copy and return that.
       d = $q.defer();
-      var p = fhir.resources.get({resource:'patient', id:pid});
+      var p = fhir.resources.get({resource:'Patient', id:pid});
       if (p !== null) {
         d.resolve(p);
         return d.promise;
       }
-      fhir.get({resource: 'patient', id: pid})
+      fhir.get({resource: 'Patient', id: pid})
       .done(function(p){
         d.resolve(p);
         $rootScope.$digest();
@@ -187,7 +187,7 @@ angular.module('fhirStarter').factory('app', ['$http',function($http) {
           "client_name": "BP Centiles",
           "launch_uri": "./apps/bp-centiles/launch.html",
           "logo_uri": "http://vectorblog.org/wp-content/uploads/2012/09/BP-Centiles-screengrab-300x211.jpg"
-        }
+        } 
       ]
     }
   };
