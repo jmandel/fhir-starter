@@ -9242,7 +9242,7 @@ function FhirClient(p) {
 
     client.resources = {
       get: function(p) {
-        var url = absolute(p.resource + '/'+p.id, server);
+        var url = absolute(typeof p === 'string' ? p : (p.resource + '/'+p.id), server);
         if (url in resources) {
           return getLocal(url);
         }

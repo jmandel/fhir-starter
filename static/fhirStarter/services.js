@@ -22,7 +22,7 @@ angular.module('fhirStarter').factory('fhirSettings', function($rootScope) {
     }
   }, {
     name: 'Local FHIR dev server',
-    serviceUrl: 'http://localhost:9090',
+    serviceUrl: 'http://localhost:8001',
     auth: {
       type: 'basic',
       username: 'client',
