@@ -35,7 +35,7 @@
     <script src="bower_components/json3/lib/json3.min.js"></script>
     <![endif]-->
     <script>
-      window.initialHash = window.location.hash;
+      window.initialHash = encodeURIComponent(window.location.hash);
     </script>
 
     <!-- build:js scripts/vendor.js -->

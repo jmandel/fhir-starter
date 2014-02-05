@@ -1,9 +1,17 @@
 'use strict';
 
 angular.module('fhirDemoApp')
-.controller('MainCtrl', function ($scope) {
+.controller('BeginCtrl', function ($scope, $location) {
+  console.log("REplace", window.initialHash);
+  $location.path('/given/'+window.initialHash);
+  $location.replace();
+});
 
-  BBClient.ready(window.initialHash, function(fhirClient){
+angular.module('fhirDemoApp')
+.controller('MainCtrl', function ($scope, $routeParams, $location) {
+  var initialHash = $routeParams.initialHash;
+  BBClient.ready(decodeURIComponent(initialHash), function(fhirClient){
+    console.log('set STate', initialHash);
 
     var calls = {
       'Patient': {

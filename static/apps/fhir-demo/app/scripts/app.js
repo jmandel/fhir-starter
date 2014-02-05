@@ -8,11 +8,12 @@ angular.module('fhirDemoApp', [
 ])
   .config(function ($routeProvider) {
     $routeProvider
-      .when('/', {
+      .when('/given/:initialHash?', {
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
       })
       .otherwise({
-        redirectTo: '/'
+        templateUrl: 'views/main.html',
+        controller: 'BeginCtrl'
       });
   });
