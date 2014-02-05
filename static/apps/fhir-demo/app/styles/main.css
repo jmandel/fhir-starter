@@ -1,10 +1,23 @@
 /* Space out content a bit */
 body {
-  padding-top: 20px;
+  padding-top: 40px;
   padding-bottom: 20px;
 }
 
-div.header a {
+#fetched {
+  background: white;
+}
+
+nav.header {
+  padding-top: .5em;
+  padding-bottom: .5em;
+}
+
+nav.header h3{ 
+  padding: 0px;
+}
+
+nav a {
 cursor: pointer;
 }
 
