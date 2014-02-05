@@ -8844,9 +8844,16 @@ var FhirClient = require('./client');
 
 var BBClient = module.exports =  {debug: true}
 
-BBClient.ready = function(callback){
+BBClient.ready = function(hash, callback){
 
-  var oauthResult = window.location.hash.match(/#(.*)/);
+  var mustClearHash = false;
+  if (arguments.length == 1){
+    mustClearHash = true;
+    callback = hash;
+    hash =  window.location.hash;
+  }
+
+  var oauthResult = hash.match(/#(.*)/);
   oauthResult = oauthResult ? oauthResult[1] : "";
   oauthResult = oauthResult.split(/&/);
 
@@ -8871,7 +8878,7 @@ BBClient.ready = function(callback){
   console.log(BBClient);
 
   // don't expose hash in the URL while in production mode
-  if (BBClient.debug !== true) {
+  if (mustClearHash && BBClient.debug !== true) {
     window.location.hash="";
   }
 

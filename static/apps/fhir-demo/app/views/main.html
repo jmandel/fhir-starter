@@ -1,0 +1,29 @@
+<div class="header">
+  <ul class="nav nav-pills pull-right">
+    <li ng-class="{'active':resource=='Patient'}"><a ng-click="Patient()">Patient</a></li>
+    <li ng-class="{'active':resource=='Condition'}"><a ng-click="Condition()">Conditions</a></li>
+    <li ng-class="{'active':resource=='Observation'}"><a ng-click="Observation()">Observations</a></li>
+    <li ng-class="{'active':resource=='MedicationPrescription'}"><a ng-click="MedicationPrescription()">Prescriptions</a></li>
+  </ul>
+  <h3 class="text-muted">
+    <strong>SMART on FHIR</strong>
+    (behind the scenes)
+  </h3>
+</div>
+
+<h3 class="model">
+  Data model: 
+  <strong><a target="_blank" ng-href="{{resourceUrl()}}">
+    FHIR {{resource}} Resource
+  </a>
+</strong>
+</h3>
+
+<h3 class="url">
+  API Call:
+  <strong><code>{{url}}</code></strong>
+</h3>
+
+<pre>
+{{fetchedData || "Fetching FHIR data..."}}
+</pre>
