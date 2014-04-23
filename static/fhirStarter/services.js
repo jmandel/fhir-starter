@@ -1,6 +1,15 @@
 angular.module('fhirStarter').factory('fhirSettings', function($rootScope) {
 
-  var servers = [{
+  var servers = [
+  {
+    name: "SMART on FHIR (smartplatforms.org)",
+    serviceUrl: "https://fhir-api.smartplatforms.org",
+    auth: {
+      type: "basic",
+      username: "client",
+      password: "secret"
+    }
+  }, {
     name: 'SMART on FHIR (fhir.me)',
     serviceUrl: 'https://api.fhir.me',
     auth: {
@@ -171,7 +180,15 @@ angular.module('fhirStarter').factory('app', ['$http',function($http) {
           "client_name": "BP Centiles",
           "launch_uri": "./apps/bp-centiles/launch.html",
           "logo_uri": "http://vectorblog.org/wp-content/uploads/2012/09/BP-Centiles-screengrab-300x211.jpg"
-        } 
+        }, {
+          "client_name": "Diabetes Monograph",
+          "launch_uri": "./apps/diabetes-monograph/launch.html",
+          "logo_uri": "http://vectorblog.org/wp-content/uploads/2012/09/BP-Centiles-screengrab-300x211.jpg"
+        }, {
+          "client_name": "FHIR Demo App",
+          "launch_uri": "./apps/fhir-demo/app/launch.html",
+          "logo_uri": "http://vectorblog.org/wp-content/uploads/2012/09/BP-Centiles-screengrab-300x211.jpg"
+        }
       ]
     }
   };
