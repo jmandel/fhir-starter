@@ -183,11 +183,11 @@ angular.module('fhirStarter').factory('app', ['$http',function($http) {
         }, {
           "client_name": "Diabetes Monograph",
           "launch_uri": "./apps/diabetes-monograph/launch.html",
-          "logo_uri": "http://vectorblog.org/wp-content/uploads/2012/09/BP-Centiles-screengrab-300x211.jpg"
+          "logo_uri": "http://smartplatforms.org/wp-content/uploads/2012/10/Diabetes-Monograph-App-1.2-19Oct2012-Snap.png"
         }, {
           "client_name": "FHIR Demo App",
           "launch_uri": "./apps/fhir-demo/app/launch.html",
-          "logo_uri": "http://vectorblog.org/wp-content/uploads/2012/09/BP-Centiles-screengrab-300x211.jpg"
+          "logo_uri": "http://www.hl7.org/implement/standards/fhir/assets/images/fhir-logo-www.png"
         }
       ]
     }
