@@ -55,10 +55,10 @@ angular.module('fhirStarter').factory('fhirSettings', function($rootScope) {
 
 angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, fhirSettings) {
 
-  var fhir;
+  var smart;
 
   function  setup(){
-    fhir = new FhirClient(fhirSettings.get());
+    smart = new FHIR.client(fhirSettings.get());
   }
 
   setup();
@@ -79,11 +79,13 @@ angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, 
 
     search: function(p){
       d = $q.defer();
-      fhir.search({
-        resource: 'Patient',
-        searchTerms: {name: p.tokens, _sort: ["family","given"]},
-        count: 10
-      }).done(function(r, search){
+      smart.Patient.where
+      .name(p.tokens)
+      ._count(10)
+      ._sortAsc("family")
+      ._sortAsc("given")
+      .search()
+      .done(function(r, search){
         currentSearch = search;
         atPage = 0;
         pages = [r];
@@ -125,13 +127,12 @@ angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, 
       // If it's already in our resource cache, return it.
       // Otherwise fetch a new copy and return that.
       d = $q.defer();
-      var p = fhir.resources.get({resource:'Patient', id:pid});
+      var p = smart.resources.get({resource:'Patient', id:pid});
       if (p !== null) {
         d.resolve(p);
         return d.promise;
       }
-      fhir.get({resource: 'Patient', id: pid})
-      .done(function(p){
+      smart.Patient.read(pid).done(function(p){
         d.resolve(p);
         $rootScope.$digest();
       });
@@ -150,23 +151,6 @@ angular.module('fhirStarter').factory('patient', function() {
       if (!name) return null;
 
       return name.given.join(" ") + " " + name.family.join(" ");
-    }
-  };
-});
-
-angular.module('fhirStarter').factory('user', function() {
-  return {
-    getPatients: function(){
-      return $.ajax({
-        url:publicUri+"/internal/getPatients/"+user._id, 
-        dataType:"json"
-      });
-    },
-    getAuthorizations: function(){
-      return $.ajax({
-        url:publicUri+"/internal/getAuthorizations/"+user._id, 
-        dataType:"json"
-      });
     }
   };
 });

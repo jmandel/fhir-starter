@@ -16,8 +16,8 @@
     <script src="js/modernizr.js"></script>
 
     <script>
-      BBClient.ready(function(fhirClient){
-        localStorage.fhirSettings = JSON.stringify(fhirClient.server);
+      FHIR.oauth2.ready(function(smart){
+        localStorage.fhirSettings = JSON.stringify(smart.server);
         window.location.hash = "#/ui/select-patient";
       });
     </script>

@@ -2,35 +2,21 @@
 
 angular.module('fhirDemoApp')
 .controller('BeginCtrl', function ($scope, $location) {
-  console.log("REplace", window.initialHash);
   $location.path('/given/'+window.initialHash);
   $location.replace();
 });
 
 angular.module('fhirDemoApp')
-.controller('MainCtrl', function ($scope, $routeParams, $location) {
+.controller('MainCtrl', function ($scope, $routeParams) {
   var initialHash = $routeParams.initialHash;
-  BBClient.ready(decodeURIComponent(initialHash), function(fhirClient){
+  FHIR.oauth2.ready(decodeURIComponent(initialHash), function(smart){
     console.log('set STate', initialHash);
 
     var calls = {
-      'Patient': {
-        url: '/Patient/'+fhirClient.patientId,
-        resource: 'Patient'
-      },
-      'Condition': {
-        url: '/Condition?subject='+fhirClient.patientId,
-        resource: 'Condition'
-      },
-      'Observation': {
-        url: '/Observation?subject='+fhirClient.patientId,
-        resource: 'Observation'
-      },
-      'MedicationPrescription': {
-        url: '/MedicationPrescription?patient='+fhirClient.patientId,
-        resource: 'MedicationPrescription'
-      }
-
+      'Patient': smart.Patient.where,
+      'Condition': smart.Condition.where,
+      'Observation': smart.Observation.where,
+      'MedicationPrescription': smart.MedicationPrescription.where
     };
 
     $scope.resourceUrl = function(){
@@ -40,14 +26,15 @@ angular.module('fhirDemoApp')
     Object.keys(calls).forEach(function(resource){
       var call = calls[resource];
       $scope[resource] = function(){
-        $scope.url = call.url;
         $scope.resource = resource;
+        $scope.url = call.queryUrl();
         $scope.fetchedData = null;
-        var url = fhirClient.server.serviceUrl + $scope.url;
-        jQuery.ajax(fhirClient.authenticated({
+        jQuery.ajax(smart.authenticated({
           type: 'GET',
-          url: url,
-          dataType: 'json'
+          url: smart.urlFor(call),
+          dataType: 'json',
+          data: call.queryParams(),
+          traditional: true
         })).done(function(data){
           $scope.fetchedData = JSON.stringify(data, null, 2);
           $scope.$apply();

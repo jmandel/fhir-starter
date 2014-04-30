@@ -12,7 +12,7 @@ var client = {
   "scope":  "summary search"
 };
 
-BBClient.providers(["https://pilots.fhir.me"], function(providers){
+FHiR.oauth2.providers(["https://pilots.fhir.me"], function(providers){
 
   var matched;
 
@@ -23,12 +23,12 @@ BBClient.providers(["https://pilots.fhir.me"], function(providers){
   if (matching.length === 1) {
     matched = matching[0];
   } else if (matching.length === 0) {
-    matched = BBClient.noAuthFhirProvider(fhirServiceUrl);
+    matched = FHiR.oauth2.noAuthFhirProvider(fhirServiceUrl);
   } else {
     throw "Found >1 match for " + fhirServiceUrl;
   }
 
-  BBClient.authorize({
+  FHiR.oauth2.authorize({
     client: client, 
     provider: matched,
     patientId: getParameterByName("patientId")

@@ -20,7 +20,7 @@
   "smarttabs": true,
   "globals": {
     "angular": false,
-    "BBClient": false,
+    "FHIR": false,
     "jQuery": false
   }
 }
