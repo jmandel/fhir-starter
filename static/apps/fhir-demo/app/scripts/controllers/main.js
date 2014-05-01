@@ -12,11 +12,12 @@ angular.module('fhirDemoApp')
   FHIR.oauth2.ready(decodeURIComponent(initialHash), function(smart){
     console.log('set STate', initialHash);
 
+    var patient = smart.context.patient;
     var calls = {
-      'Patient': smart.Patient.where,
-      'Condition': smart.Condition.where,
-      'Observation': smart.Observation.where,
-      'MedicationPrescription': smart.MedicationPrescription.where
+      'Patient': patient.Patient.where,
+      'Condition': patient.Condition.where,
+      'Observation': patient.Observation.where,
+      'MedicationPrescription': patient.MedicationPrescription.where
     };
 
     $scope.resourceUrl = function(){

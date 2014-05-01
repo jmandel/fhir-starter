@@ -79,8 +79,8 @@ angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, 
 
     search: function(p){
       d = $q.defer();
-      smart.Patient.where
-      .name(p.tokens)
+      smart.api.Patient.where
+      .nameAll(p.tokens)
       ._count(10)
       ._sortAsc("family")
       ._sortAsc("given")
@@ -127,12 +127,12 @@ angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, 
       // If it's already in our resource cache, return it.
       // Otherwise fetch a new copy and return that.
       d = $q.defer();
-      var p = smart.resources.get({resource:'Patient', id:pid});
+      var p = smart.cache.get({resource:'Patient', id:pid});
       if (p !== null) {
         d.resolve(p);
         return d.promise;
       }
-      smart.Patient.read(pid).done(function(p){
+      smart.api.Patient.read(pid).done(function(p){
         d.resolve(p);
         $rootScope.$digest();
       });
