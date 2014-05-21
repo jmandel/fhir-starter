@@ -12,25 +12,10 @@ var client = {
   "scope":  "summary search"
 };
 
-FHiR.oauth2.providers(["https://pilots.fhir.me"], function(providers){
-
-  var matched;
-
-  var matching = providers.filter(function(p){
-    return (p.bb_api.fhir_service_uri === fhirServiceUrl);
-  });
-
-  if (matching.length === 1) {
-    matched = matching[0];
-  } else if (matching.length === 0) {
-    matched = FHiR.oauth2.noAuthFhirProvider(fhirServiceUrl);
-  } else {
-    throw "Found >1 match for " + fhirServiceUrl;
-  }
-
-  FHiR.oauth2.authorize({
+BBClient.providers(fhirServiceUrl, function(provider){
+  BBClient.authorize({
     client: client, 
-    provider: matched,
+    provider: provider,
     patientId: getParameterByName("patientId")
   });
 });
