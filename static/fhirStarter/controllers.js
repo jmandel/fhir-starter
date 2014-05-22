@@ -32,11 +32,20 @@ angular.module('fhirStarter').controller("ErrorsController",
       });
 
       $scope.save = function(){
-        fhirSettings.set(JSON.parse($scope.settings));
-        $scope.showing.settings = false;
+        var newSettings = JSON.parse($scope.settings);
+        fhirSettings.set(newSettings);
+
+        if (fhirSettings.get().auth.type == 'oauth2'){
+          $scope.oauth();
+        } else {
+          $scope.showing.settings = false;
+        }
       }
 
       $scope.oauth = function(){
+        var s = fhirSettings.get();
+
+        // TODO : remove registration step
         var client = {
           "client_name": "SMART FHIR Starter",
           "client_uri": "https://github.com/jmandel/fhir-starter",
@@ -46,24 +55,15 @@ angular.module('fhirStarter').controller("ErrorsController",
           "response_types": ["token"],
           "grant_types": ["implicit"],
           "token_endpoint_auth_method": "none",
-          "scope":  "fhir-complete"
+          "scope":  "launch fhir-complete user/Patient.read"
         };
 
-        var provider = {
-          "name": "Local Testing Hospital",
-          "description": "Just on a developer's machine",
-          "url": "http://bbplus-ri.aws.af.cm",
-          "oauth2": {
-            "registration_uri": "http://bbplus-ri.aws.af.cm/register",
-            "authorize_uri": "http://bbplus-ri.aws.af.cm/authorize",
-            "token_uri": "http://bbplus-ri.aws.af.cm/token"
-          },
-          "bb_api":{
-            "fhir_service_uri": "https://api.fhir.me"
-          }
-        };
-
-        BBClient.authorize({client: client, provider: provider});
+        FHIR.oauth2.providers(s.serviceUrl, function(provider){
+          FHIR.oauth2.authorize({
+            client: client,
+            provider: provider
+          });
+        });
       }
 
 
@@ -111,7 +111,7 @@ angular.module('fhirStarter').controller("ErrorsController",
         $scope.genderglyph = {"F" : "&#9792;", "M": "&#9794;"};
         $scope.searchterm  = typeof $routeParams.q ==="string" && $routeParams.q || "";
 
-        $rootScope.$on('new-settings', function(){
+        $rootScope.$on('new-client', function(){
           $scope.getMore();
         })
 
@@ -185,6 +185,16 @@ angular.module('fhirStarter').controller("ErrorsController",
         $scope.all_apps = app.getApps();
         $scope.patientHelper = patient;
         $scope.fhirServiceUrl = fhirSettings.get().serviceUrl
+
+        $scope.launch = function launch(app){
+           //ng-href="{{app.launch_uri}}?fhirServiceUrl={{fhirServiceUrl}}&patientId={{patientHelper.id(patient).id}}" 
+
+          var r = patientSearch.registerContext(app, {patient: $routeParams.pid});
+          r.then(function(c){
+            console.log("Got context registered", c);
+          });
+        }
+
 
         $scope.givens = function(name) {
           return name && name.givens.join(" ");

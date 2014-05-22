@@ -16,10 +16,7 @@
     <script src="js/modernizr.js"></script>
 
     <script>
-      FHIR.oauth2.ready(function(smart){
-        localStorage.fhirSettings = JSON.stringify(smart.server);
-        window.location.hash = "#/ui/select-patient";
-      });
+      window.initialHash = encodeURIComponent(window.location.hash);
     </script>
 
     <style type="text/css">

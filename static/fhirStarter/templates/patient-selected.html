@@ -11,7 +11,7 @@
             <img ng-src="{{app.logo_uri}}">
           </div>
           <div class="caption">
-            <a ng-href="{{app.launch_uri}}?fhirServiceUrl={{fhirServiceUrl}}&patientId={{patientHelper.id(patient).id}}" target="_blank" class="btn btn-block btn-primary">{{app.client_name}}</a>
+            <a ng-click="launch(app)" target="_blank" class="btn btn-block btn-primary">{{app.client_name}}</a>
           </div>
         </div>
         </li>

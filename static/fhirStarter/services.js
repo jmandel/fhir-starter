@@ -1,64 +1,70 @@
 angular.module('fhirStarter').factory('fhirSettings', function($rootScope) {
 
   var servers = [
-  {
-    name: "SMART on FHIR (smartplatforms.org)",
-    serviceUrl: "https://fhir-api.smartplatforms.org",
-    auth: {
-      type: "basic",
-      username: "client",
-      password: "secret"
-    }
-  }, {
-    name: 'SMART on FHIR (fhir.me)',
-    serviceUrl: 'https://api.fhir.me',
-    auth: {
-      type: 'basic',
-      username: 'client',
-      password: 'secret'
-    }
-  }, {
-    name: 'Health Intersections Server (Grahame)',
-    serviceUrl: 'http://hl7connect.healthintersections.com.au/svc/fhir',
-    auth: {
-      type: 'none'
-    }
-  }, {
-    name: 'Furore Server (Ewout)',
-    serviceUrl: 'http://spark.furore.com/fhir',
-    auth: {
-      type: 'none'
-    }
-  }, {
-    name: 'Local FHIR dev server',
-    serviceUrl: 'http://localhost:8001',
-    auth: {
-      type: 'basic',
-      username: 'client',
-      password: 'secret'
-    }
-  }, {
-    name: 'Local FHIR Tomcat server',
-    serviceUrl: 'http://localhost:8080/fhir-server',
-    auth: {
-      type: 'basic',
-      username: 'client',
-      password: 'secret'
-    }
-  }];
+    {
+      name: "SMART on FHIR (smartplatforms.org)",
+      serviceUrl: "https://fhir-api.smartplatforms.org",
+      auth: {
+        type: "basic",
+        username: "client",
+        password: "secret"
+      }
+    }, {
+      name: 'SMART on FHIR (fhir.me)',
+      serviceUrl: 'https://api.fhir.me',
+      auth: {
+        type: 'basic',
+        username: 'client',
+        password: 'secret'
+      }
+    }, {
+      name: 'Health Intersections Server (Grahame)',
+      serviceUrl: 'http://hl7connect.healthintersections.com.au/svc/fhir',
+      auth: {
+        type: 'none'
+      }
+    }, {
+      name: 'Furore Server (Ewout)',
+      serviceUrl: 'http://spark.furore.com/fhir',
+      auth: {
+        type: 'none'
+      }
+    }, {
+      name: 'Local FHIR dev server with auth',
+      serviceUrl: 'http://localhost:8080',
+      auth: {
+        type: 'oauth2',
+      }
+    },  {
+      name: 'Local FHIR dev server',
+      serviceUrl: 'http://localhost:8001',
+      auth: {
+        type: 'basic',
+        username: 'client',
+        password: 'secret'
+      }
+    }, {
+      name: 'Local FHIR Tomcat server',
+      serviceUrl: 'http://localhost:8080/fhir-server',
+      auth: {
+        type: 'basic',
+        username: 'client',
+        password: 'secret'
+      }
+    }];
 
-  var settings = localStorage.fhirSettings ? 
-  JSON.parse(localStorage.fhirSettings) : servers[0];
+    var settings = localStorage.fhirSettings ? 
+    JSON.parse(localStorage.fhirSettings) : servers[0];
 
-  return {
-    servers: servers,
-    get: function(){return settings;},
-    set: function(s){
-      settings = s;
-      localStorage.fhirSettings = JSON.stringify(settings);
-      $rootScope.$emit('new-settings');
+    return {
+      servers: servers,
+      get: function(){return settings;},
+      set: function(s){
+        settings = s;
+        localStorage.fhirSettings = JSON.stringify(settings);
+        $rootScope.$emit('new-settings');
+      }
     }
-  }
 
 });
 
@@ -66,14 +72,24 @@ angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, 
 
   var smart;
 
-  function  setup(){
-    smart = new FHIR.client(fhirSettings.get());
+  function  getClient(){
+    if (window.initialHash !== undefined && window.initialHash != "" && !(window.initialHash.match(new RegExp('^%23%2Fui')))){
+      FHIR.oauth2.ready(decodeURIComponent(window.initialHash),
+      function(smartNew){
+        delete window.initialHash;
+        smart = smartNew;
+        window.smaht = smart;
+        $rootScope.$emit('new-client');
+      });
+    } else {
+      smart = new FHIR.client(fhirSettings.get());
+      $rootScope.$emit('new-client');
+    }
   }
 
-  setup();
-
+  getClient();
   $rootScope.$on('new-settings', function(e){
-    setup()
+    getClient()
   });
 
 
@@ -86,6 +102,26 @@ angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, 
       return atPage;
     },
 
+    registerContext: function(app, params){
+      d = $q.defer();
+
+      var req =smart.authenticated({
+        url: smart.server.serviceUrl + '/_services/smart/Launch',
+        type: 'POST',
+        contentType: "application/json",
+        data: JSON.stringify({
+          client_id: app.client_id,
+          parameters:  params
+        })
+      });
+
+      $.ajax(req)
+      .done(d.resolve)
+      .fail(d.reject);
+
+      return d.promise;
+    },
+ 
     search: function(p){
       d = $q.defer();
       smart.api.Patient.where
@@ -170,22 +206,27 @@ angular.module('fhirStarter').factory('app', ['$http',function($http) {
       return [
         {
           "client_name": "Cardiac Risk",
+          "client_id": "cardiac_risk",
           "launch_uri": "./apps/cardiac-risk/launch.html",
           "logo_uri": "http://smartplatforms.org/wp-content/uploads/2012/09/cardiac-risk-216x300.png"
         }, {
           "client_name": "Growth Chart",
+          "client_id": "growth_chart",
           "launch_uri": "./apps/growth-chart/launch.html",
           "logo_uri": "http://smartplatforms.org/wp-content/uploads/pgc-male-healthyweight-os.png"
         }, {
           "client_name": "BP Centiles",
+          "client_id": "bp_centiles",
           "launch_uri": "./apps/bp-centiles/launch.html",
           "logo_uri": "http://vectorblog.org/wp-content/uploads/2012/09/BP-Centiles-screengrab-300x211.jpg"
         }, {
           "client_name": "Diabetes Monograph",
+          "client_id": "diabetes_monograph",
           "launch_uri": "./apps/diabetes-monograph/launch.html",
           "logo_uri": "http://smartplatforms.org/wp-content/uploads/2012/10/Diabetes-Monograph-App-1.2-19Oct2012-Snap.png"
         }, {
           "client_name": "FHIR Demo App",
+          "client_id": "fhir_demo",
           "launch_uri": "./apps/fhir-demo/app/launch.html",
           "logo_uri": "http://www.hl7.org/implement/standards/fhir/assets/images/fhir-logo-www.png"
         }
