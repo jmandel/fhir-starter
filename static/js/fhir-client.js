@@ -136,6 +136,7 @@ BBClient.authorize = function(params){
     delete post.headers;
   }
 
+  var accessScope = params.client.access_scope;
   // 2. then authorize to access records
   jQuery.ajax(post).success(function(client){
     console.log("Got client", JSON.stringify(client, null,2 ));
@@ -148,16 +149,16 @@ BBClient.authorize = function(params){
     if (params.patientId) {
       authScope = encodeURIComponent("search:"+params.patientId);
     } else {
-      authScope = client.scope
+      authScope = params.client.access_scope;
     }
-    console.log("sending client reg", params.client);
 
     var redirect_to=params.provider.oauth2.authorize_uri + "?" + 
       "client_id="+client.client_id+"&"+
       "response_type=token&"+
-      "scope="+authScope+"&"+
+      "scope="+accessScope+"&"+
       "redirect_uri="+client.redirect_uris[0]+"&"+
       "state="+state;
+    console.log("redirecting to", redirect_to);
     window.location.href = redirect_to;
   });
 };

@@ -55,7 +55,7 @@ angular.module('fhirStarter').controller("ErrorsController",
           "response_types": ["token"],
           "grant_types": ["implicit"],
           "token_endpoint_auth_method": "none",
-          "scope":  "launch fhir-complete user/Patient.read"
+          "scope":  "orchestrate-launch fhir-complete user/Patient.read"
         };
 
         FHIR.oauth2.providers(s.serviceUrl, function(provider){
@@ -181,17 +181,30 @@ angular.module('fhirStarter').controller("ErrorsController",
       });
 
 
-      angular.module('fhirStarter').controller("PatientViewController", function($scope, patient, app, patientSearch, $routeParams, $rootScope, $location, fhirSettings) {
+      angular.module('fhirStarter').controller("PatientViewController", function($scope, patient, app, patientSearch, $routeParams, $rootScope, $location, fhirSettings, random) {
         $scope.all_apps = app.getApps();
         $scope.patientHelper = patient;
         $scope.fhirServiceUrl = fhirSettings.get().serviceUrl
 
         $scope.launch = function launch(app){
-           //ng-href="{{app.launch_uri}}?fhirServiceUrl={{fhirServiceUrl}}&patientId={{patientHelper.id(patient).id}}" 
 
-          var r = patientSearch.registerContext(app, {patient: $routeParams.pid});
-          r.then(function(c){
-            console.log("Got context registered", c);
+          /* Hack to get around the window popup behavior in modern web browsers
+          (The window.open needs to be synchronous with the click even to
+          avoid triggering  popup blockers. */
+
+          var key = random(32);
+          window.localStorage[key] = "requested-launch";
+          window.open('launch.html?'+key, '_blank');
+
+          patientSearch
+          .registerContext(app, {patient: $routeParams.pid})
+          .then(function(c){
+          console.log(patientSearch.smart());
+            window.localStorage[key] = JSON.stringify({
+              app: app,
+              fhir_service_url: patientSearch.smart().server.serviceUrl,
+              context: c
+            });
           });
         }
 

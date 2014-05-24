@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <script src="bootstrap/js/jquery.js"></script>
+    <script>
+      // A hack to get around the window popup behavior in modern web browsers
+      var key = window.location.search.slice(1);
+      if (!(key in window.localStorage)){
+        console.log('Failed to launch app -- no launch key.');
+      }
+      onStorage();
+      window.addEventListener('storage', onStorage, false);
+      function onStorage(){
+        if (window.localStorage[key] === 'requested-launch') {
+          return;
+        }
+        var details = JSON.parse(window.localStorage[key]);
+        window.location = details.app.launch_uri + 
+        '?fhir_service_url=' + details.fhir_service_url + 
+        '&launch_id=' + details.context.launch_id;
+      }
+    </script>
+  </head>
+  <body>
+    Launching...
+  </body>
+</html>

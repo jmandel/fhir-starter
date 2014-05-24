@@ -121,7 +121,7 @@ angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, 
 
       return d.promise;
     },
- 
+
     search: function(p){
       d = $q.defer();
       smart.api.Patient.where
@@ -182,8 +182,22 @@ angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, 
         $rootScope.$digest();
       });
       return d.promise;
-    }  
+    },
+    smart: function(){
+      return smart;
+    }
   };
+});
+
+angular.module('fhirStarter').factory('random', function() {
+  var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  return function randomString(length) {
+    var result = '';
+    for (var i = length; i > 0; --i) {
+      result += chars[Math.round(Math.random() * (chars.length - 1))];
+    }
+    return result;
+  }
 });
 
 angular.module('fhirStarter').factory('patient', function() {
