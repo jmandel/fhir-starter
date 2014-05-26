@@ -34,38 +34,8 @@ angular.module('fhirStarter').controller("ErrorsController",
       $scope.save = function(){
         var newSettings = JSON.parse($scope.settings);
         fhirSettings.set(newSettings);
-
-        if (fhirSettings.get().auth.type == 'oauth2'){
-          $scope.oauth();
-        } else {
-          $scope.showing.settings = false;
-        }
+        $scope.showing.settings = false;
       }
-
-      $scope.oauth = function(){
-        var s = fhirSettings.get();
-
-        // TODO : remove registration step
-        var client = {
-          "client_name": "SMART FHIR Starter",
-          "client_uri": "https://github.com/jmandel/fhir-starter",
-          "logo_uri": "http://wiki.hl7.org/images/1/15/FHIR.png",
-          "contacts": [ "info@smartplatforms.org" ],
-          "redirect_uris": [window.location.origin + window.location.pathname],
-          "response_types": ["token"],
-          "grant_types": ["implicit"],
-          "token_endpoint_auth_method": "none",
-          "scope":  "orchestrate-launch fhir-complete user/Patient.read"
-        };
-
-        FHIR.oauth2.providers(s.serviceUrl, function(provider){
-          FHIR.oauth2.authorize({
-            client: client,
-            provider: provider
-          });
-        });
-      }
-
 
     });
 
@@ -199,10 +169,10 @@ angular.module('fhirStarter').controller("ErrorsController",
           patientSearch
           .registerContext(app, {patient: $routeParams.pid})
           .then(function(c){
-          console.log(patientSearch.smart());
+            console.log(patientSearch.smart());
             window.localStorage[key] = JSON.stringify({
               app: app,
-              fhir_service_url: patientSearch.smart().server.serviceUrl,
+              iss: patientSearch.smart().server.serviceUrl,
               context: c
             });
           });

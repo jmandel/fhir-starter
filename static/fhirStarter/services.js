@@ -1,4 +1,4 @@
-angular.module('fhirStarter').factory('fhirSettings', function($rootScope) {
+angular.module('fhirStarter').factory('fhirSettings', function($rootScope, oauth2) {
 
   var servers = [
     {
@@ -62,17 +62,39 @@ angular.module('fhirStarter').factory('fhirSettings', function($rootScope) {
       set: function(s){
         settings = s;
         localStorage.fhirSettings = JSON.stringify(settings);
+        check(settings);
         $rootScope.$emit('new-settings');
       }
     }
 
 });
 
-angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, fhirSettings) {
+angular.module('fhirStarter').factory('oauth2', function() {
+
+  return {
+    authorize: function(s){
+      // TODO : remove registration step
+      var client = {
+        "client_id": "fhir_starter",
+        "redirect_uri": window.location.origin + window.location.pathname +'/',
+        "scope":  "smart/orchestrate_launch user/*.*"
+      };
+
+      FHIR.oauth2.authorize({
+        client: client,
+        server: s.serviceUrl
+      });
+    }
+  };
+
+});
+
+angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, fhirSettings, oauth2) {
 
   var smart;
 
   function  getClient(){
+
     if (window.initialHash !== undefined && window.initialHash != "" && !(window.initialHash.match(new RegExp('^%23%2Fui')))){
       FHIR.oauth2.ready(decodeURIComponent(window.initialHash),
       function(smartNew){
@@ -82,6 +104,11 @@ angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, 
         $rootScope.$emit('new-client');
       });
     } else {
+
+      if (fhirSettings.get().auth.type == 'oauth2'){
+        oauth2.authorize(fhirSettings.get());
+      }
+
       smart = new FHIR.client(fhirSettings.get());
       $rootScope.$emit('new-client');
     }

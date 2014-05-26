@@ -15,8 +15,8 @@
         }
         var details = JSON.parse(window.localStorage[key]);
         window.location = details.app.launch_uri + 
-        '?fhir_service_url=' + details.fhir_service_url + 
-        '&launch_id=' + details.context.launch_id;
+        '?iss=' + details.iss + 
+        '&launch=' + details.context.launch_id;
       }
     </script>
   </head>
