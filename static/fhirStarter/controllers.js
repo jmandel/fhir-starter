@@ -152,7 +152,7 @@ angular.module('fhirStarter').controller("ErrorsController",
 
 
       angular.module('fhirStarter').controller("PatientViewController", function($scope, patient, app, patientSearch, $routeParams, $rootScope, $location, fhirSettings, random) {
-        $scope.all_apps = app.getApps();
+        $scope.all_apps = app;
         $scope.patientHelper = patient;
         $scope.fhirServiceUrl = fhirSettings.get().serviceUrl
 

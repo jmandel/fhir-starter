@@ -5,7 +5,7 @@
     <br style="clear: both;" />
     <div class="row-fluid">
       <ul class="thumbnails">
-        <li class="span3" ng-repeat="app in all_apps">
+        <li class="span3" ng-repeat="app in all_apps|filter:{launch_uri:'!!'}">
         <div class="thumbnail">
           <div class="thumb-holder">
             <img ng-src="{{app.logo_uri}}">

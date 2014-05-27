@@ -241,39 +241,9 @@ angular.module('fhirStarter').factory('patient', function() {
   };
 });
 
-angular.module('fhirStarter').factory('app', ['$http',function($http) {
-  return {
-    getApps: function(){
-      return [
-        {
-          "client_name": "Cardiac Risk",
-          "client_id": "cardiac_risk",
-          "launch_uri": "./apps/cardiac-risk/launch.html",
-          "logo_uri": "http://smartplatforms.org/wp-content/uploads/2012/09/cardiac-risk-216x300.png"
-        }, {
-          "client_name": "Growth Chart",
-          "client_id": "growth_chart",
-          "launch_uri": "./apps/growth-chart/launch.html",
-          "logo_uri": "http://smartplatforms.org/wp-content/uploads/pgc-male-healthyweight-os.png"
-        }, {
-          "client_name": "BP Centiles",
-          "client_id": "bp_centiles",
-          "launch_uri": "./apps/bp-centiles/launch.html",
-          "logo_uri": "http://vectorblog.org/wp-content/uploads/2012/09/BP-Centiles-screengrab-300x211.jpg"
-        }, {
-          "client_name": "Diabetes Monograph",
-          "client_id": "diabetes_monograph",
-          "launch_uri": "./apps/diabetes-monograph/launch.html",
-          "logo_uri": "http://smartplatforms.org/wp-content/uploads/2012/10/Diabetes-Monograph-App-1.2-19Oct2012-Snap.png"
-        }, {
-          "client_name": "FHIR Demo App",
-          "client_id": "fhir_demo",
-          "launch_uri": "./apps/fhir-demo/app/launch.html",
-          "logo_uri": "http://www.hl7.org/implement/standards/fhir/assets/images/fhir-logo-www.png"
-        }
-      ]
-    }
-  };
+angular.module('fhirStarter').factory('app', ['$resource',function($resource) {
+  var apps = $resource('fhirStarter/apps.json');
+  return apps;
 }]);
 
 
