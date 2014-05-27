@@ -240,8 +240,8 @@ angular.module('fhirStarter').factory('patient', function() {
   };
 });
 
-angular.module('fhirStarter').factory('app', ['$resource',function($resource) {
-  var apps = $resource('fhirStarter/apps.json');
+angular.module('fhirStarter').factory('app', ['$http',function($http) {
+  var apps = $http.get('fhirStarter/apps.json');
   return apps;
 }]);
 
