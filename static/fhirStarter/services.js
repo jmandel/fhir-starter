@@ -62,7 +62,6 @@ angular.module('fhirStarter').factory('fhirSettings', function($rootScope, oauth
       set: function(s){
         settings = s;
         localStorage.fhirSettings = JSON.stringify(settings);
-        check(settings);
         $rootScope.$emit('new-settings');
       }
     }
