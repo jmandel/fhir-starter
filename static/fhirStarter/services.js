@@ -19,7 +19,7 @@ angular.module('fhirStarter').factory('fhirSettings', function($rootScope, oauth
       }
     }, {
       name: 'Health Intersections Server (Grahame)',
-      serviceUrl: 'http://hl7connect.healthintersections.com.au/svc/fhir',
+      serviceUrl: 'http://fhir.healthintersections.com.au/open/',
       auth: {
         type: 'none'
       }
@@ -30,47 +30,51 @@ angular.module('fhirStarter').factory('fhirSettings', function($rootScope, oauth
         type: 'none'
       }
     }, {
-      name: 'Local FHIR dev server with auth',
-      serviceUrl: 'http://localhost:8080',
+      name: 'Local FHIR dev server, oauth',
+      serviceUrl: 'http://localhost:9080',
       auth: {
         type: 'oauth2',
       }
     },  {
-      name: 'Local FHIR dev server',
-      serviceUrl: 'http://localhost:8001',
+      name: 'Local FHIR dev server, basic auth',
+      serviceUrl: 'http://localhost:8080',
       auth: {
         type: 'basic',
         username: 'client',
         password: 'secret'
       }
     }, {
-      name: 'Local FHIR Tomcat server',
-      serviceUrl: 'http://localhost:8080/fhir-server',
+      name: 'Local FHIR dev server, no auth',
+      serviceUrl: 'http://localhost:8080',
       auth: {
-        type: 'basic',
-        username: 'client',
-        password: 'secret'
-      }
-    }];
-
-    var settings = localStorage.fhirSettings ? 
-    JSON.parse(localStorage.fhirSettings) : servers[0];
-
-    return {
-      servers: servers,
-      get: function(){return settings;},
-      set: function(s){
-        settings = s;
-        localStorage.fhirSettings = JSON.stringify(settings);
-        $rootScope.$emit('new-settings');
+        type: 'none'
       }
     }
+  ];
+
+  var settings = localStorage.fhirSettings ? 
+  JSON.parse(localStorage.fhirSettings) : servers[0];
+
+  return {
+    servers: servers,
+    get: function(){return settings;},
+    set: function(s){
+      settings = s;
+      localStorage.fhirSettings = JSON.stringify(settings);
+      $rootScope.$emit('new-settings');
+    }
+  }
 
 });
 
-angular.module('fhirStarter').factory('oauth2', function() {
+angular.module('fhirStarter').factory('oauth2', function($rootScope) {
+
+  var authorizing = false;
 
   return {
+    authorizing: function(){
+      return authorizing;
+    },
     authorize: function(s){
       // TODO : remove registration step
       var client = {
@@ -78,7 +82,7 @@ angular.module('fhirStarter').factory('oauth2', function() {
         "redirect_uri": window.location.origin + window.location.pathname +'/',
         "scope":  "smart/orchestrate_launch user/*.*"
       };
-
+      authorizing = true;
       FHIR.oauth2.authorize({
         client: client,
         server: s.serviceUrl
@@ -102,12 +106,9 @@ angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, 
         window.smaht = smart;
         $rootScope.$emit('new-client');
       });
+    } else if (fhirSettings.get().auth.type == 'oauth2'){
+      oauth2.authorize(fhirSettings.get());
     } else {
-
-      if (fhirSettings.get().auth.type == 'oauth2'){
-        oauth2.authorize(fhirSettings.get());
-      }
-
       smart = new FHIR.client(fhirSettings.get());
       $rootScope.$emit('new-client');
     }
@@ -150,6 +151,10 @@ angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, 
 
     search: function(p){
       d = $q.defer();
+      if (!smart){
+        d.resolve([]);
+        return d.promise;
+      };
       smart.api.Patient.where
       .nameAll(p.tokens)
       ._count(10)

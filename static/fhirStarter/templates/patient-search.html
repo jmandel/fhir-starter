@@ -17,8 +17,13 @@
   </div>
   <div class="row">
     <div class="span6 result">
-      <div id="loading-patient-results" ng-show="loading">
+      <div id="loading-patient-results"
+        ng-show="loading && !oauth2.authorizing()">
         <h1>Loading results...</h1>
+      </div>
+      <div id="signing in"
+        ng-show="oauth2.authorizing()">
+        <h1>Signing in...</h1>
       </div>
       <div id="patient-results" ng-cloak >
         <table class="table table-striped table-hover table-condensed" ng-class="{loading:loading}">
@@ -33,7 +38,7 @@
             <tr ng-repeat="blank in blanks track by $index">
               <td class="gender"></td>
               <td colspan="2">
-                <span ng-show="!loading && (patients.length==0) && $first">
+                <span ng-show="!loading && !oauth2.authorizing() && (patients.length==0) && $first">
                   No matches -- try broadening your search.
                 </span>
               </span>&nbsp;

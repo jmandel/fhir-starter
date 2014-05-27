@@ -7,10 +7,13 @@ angular.module('fhirStarter').controller("MainController",
 );
 
 angular.module('fhirStarter').controller("ErrorsController", 
-  function($scope, $rootScope, $route, $routeParams, $location, fhirSettings){
+  function($scope, $rootScope, $route, $routeParams, $location, fhirSettings, oauth2){
 
     $scope.errors = [];
     $rootScope.$on('error', function(context, e){
+      if (e.match(/Search failed/) && oauth2.authorizing()){
+        return;
+      }
       $scope.errors.push(e);
     })
 
@@ -53,8 +56,9 @@ angular.module('fhirStarter').controller("ErrorsController",
     );
 
     angular.module('fhirStarter').controller("PatientSearchController",  
-      function($scope, patient, patientSearch, $routeParams, $rootScope, $location) {
+      function($scope, patient, patientSearch, $routeParams, $rootScope, $location, oauth2) {
 
+        $scope.oauth2 = oauth2;
         $scope.onSelected = function(p){
           var pid = patient.id(p).id;
           var loc = "/ui/patient-selected/"+pid;
