@@ -67,7 +67,7 @@ angular.module('fhirStarter').factory('fhirSettings', function($rootScope, oauth
 
 });
 
-angular.module('fhirStarter').factory('oauth2', function($rootScope) {
+angular.module('fhirStarter').factory('oauth2', function($rootScope, $location) {
 
   var authorizing = false;
 
@@ -85,26 +85,37 @@ angular.module('fhirStarter').factory('oauth2', function($rootScope) {
       authorizing = true;
       FHIR.oauth2.authorize({
         client: client,
-        server: s.serviceUrl
+        server: s.serviceUrl,
+        from: $location.url()
       });
     }
   };
 
 });
 
-angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, fhirSettings, oauth2) {
+angular.module('fhirStarter').factory('patientSearch', function($route, $routeParams, $location, $rootScope, $q, fhirSettings, oauth2) {
 
+  console.log('initialzing pt search service');
   var smart;
+  var didOauth = false;
 
   function  getClient(){
-
-    if (window.initialHash !== undefined && window.initialHash != "" && !(window.initialHash.match(new RegExp('^%23%2Fui')))){
+    if (window.initialHash !== undefined && window.initialHash != "" && !(window.initialHash.match(new RegExp('^%23%2F')))){
       FHIR.oauth2.ready(decodeURIComponent(window.initialHash),
       function(smartNew){
         delete window.initialHash;
         smart = smartNew;
         window.smaht = smart;
+        didOauth = true;
         $rootScope.$emit('new-client');
+      });
+    } else if (!didOauth && $routeParams.iss){
+      oauth2.authorize({
+        "name": "OAuth server issuing launch context request",
+        "serviceUrl": decodeURIComponent($routeParams.iss),
+        "auth": {
+          "type": "oauth2"
+        }
       });
     } else if (fhirSettings.get().auth.type == 'oauth2'){
       oauth2.authorize(fhirSettings.get());
@@ -113,8 +124,16 @@ angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, 
       $rootScope.$emit('new-client');
     }
   }
-
   getClient();
+  
+   function onNewClient(){
+      if (smart && smart.state && smart.state.from !== undefined){
+        return $location.url(smart.state.from);
+      }
+   }
+
+  $rootScope.$on('new-client', onNewClient);
+
   $rootScope.$on('new-settings', function(e){
     getClient()
   });
@@ -216,7 +235,8 @@ angular.module('fhirStarter').factory('patientSearch', function($rootScope, $q, 
     },
     smart: function(){
       return smart;
-    }
+    },
+    getClient: getClient
   };
 });
 
