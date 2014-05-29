@@ -64,9 +64,6 @@ angular.module('fhirStarter').controller("ErrorsController",
     angular.module('fhirStarter').controller("BindContextController",  
       function($scope, patient, patientSearch, $routeParams, $rootScope, $location, oauth2) {
 
-        if($routeParams.iss !== patientSearch.smart().server.serviceUrl){
-          $rootScope.$emit('new-settings');
-        }
         $scope.clientName = decodeURIComponent($routeParams.clientName)
         .replace(/\+/, " ");
 

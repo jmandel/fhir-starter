@@ -9,7 +9,7 @@ angular.module('fhirStarter', ['ngAnimate', 'ngRoute','ngSanitize'], function($r
     templateUrl:'fhirStarter/templates/resolve.html'
   }) 
 
-  $routeProvider.when('/', {templateUrl:'fhirStarter/templates/start.html'});
+  $routeProvider.otherwise({redirectTo:'/ui/select-patient'});
 
   $routeProvider.when('/ui/patient-selected/:pid', {
     templateUrl:'fhirStarter/templates/patient-selected.html',

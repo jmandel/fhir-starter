@@ -124,13 +124,21 @@ angular.module('fhirStarter').factory('patientSearch', function($route, $routePa
       $rootScope.$emit('new-client');
     }
   }
-  getClient();
   
    function onNewClient(){
       if (smart && smart.state && smart.state.from !== undefined){
+        console.log(smart, 'back to from', smart.state.from);
         return $location.url(smart.state.from);
-      }
+      } 
    }
+
+  $rootScope.$on('$routeChangeSuccess', function (scope, next, current) {
+    console.log('route changed', scope, next, current);
+    console.log('so params', $routeParams);
+    if (current === undefined) {
+      getClient();
+    }
+  });
 
   $rootScope.$on('new-client', onNewClient);
 
