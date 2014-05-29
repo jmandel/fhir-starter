@@ -74,7 +74,7 @@ angular.module('fhirStarter').controller("ErrorsController",
           .registerContext({ client_id:'cardiac_risk'}, {patient: pid})
           .then(function(c){
             var to = decodeURIComponent($routeParams.endpoint);
-            to = to.replace(/launch:\?/, "launch:"+c.launch_id);
+            to = to.replace(/scope=/, "scope=launch:"+c.launch_id+"+");
             return window.location = to;
           });
 
