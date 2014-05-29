@@ -37,7 +37,7 @@ angular.module('fhirStarter').factory('fhirSettings', function($rootScope, oauth
       }
     },  {
       name: 'Local FHIR dev server, basic auth',
-      serviceUrl: 'http://localhost:8080',
+      serviceUrl: 'http://localhost:9080',
       auth: {
         type: 'basic',
         username: 'client',
@@ -45,15 +45,16 @@ angular.module('fhirStarter').factory('fhirSettings', function($rootScope, oauth
       }
     }, {
       name: 'Local FHIR dev server, no auth',
-      serviceUrl: 'http://localhost:8080',
+      serviceUrl: 'http://localhost:9080',
       auth: {
         type: 'none'
       }
     }
   ];
 
+  // Default to the 5th item in the servers list
   var settings = localStorage.fhirSettings ? 
-  JSON.parse(localStorage.fhirSettings) : servers[0];
+  JSON.parse(localStorage.fhirSettings) : servers[4];
 
   return {
     servers: servers,
