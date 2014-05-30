@@ -2,6 +2,12 @@ angular.module('fhirStarter').factory('fhirSettings', function($rootScope, oauth
 
   var servers = [
     {
+      name: 'Local FHIR dev server, oauth',
+      serviceUrl: 'http://localhost:9080',
+      auth: {
+        type: 'oauth2',
+      }
+    }, {
       name: "SMART on FHIR (smartplatforms.org)",
       serviceUrl: "https://fhir-api.smartplatforms.org",
       auth: {
@@ -30,12 +36,6 @@ angular.module('fhirStarter').factory('fhirSettings', function($rootScope, oauth
         type: 'none'
       }
     }, {
-      name: 'Local FHIR dev server, oauth',
-      serviceUrl: 'http://localhost:9080',
-      auth: {
-        type: 'oauth2',
-      }
-    },  {
       name: 'Local FHIR dev server, basic auth',
       serviceUrl: 'http://localhost:9080',
       auth: {
@@ -52,9 +52,8 @@ angular.module('fhirStarter').factory('fhirSettings', function($rootScope, oauth
     }
   ];
 
-  // Default to the 5th item in the servers list
   var settings = localStorage.fhirSettings ? 
-  JSON.parse(localStorage.fhirSettings) : servers[4];
+  JSON.parse(localStorage.fhirSettings) : servers[0];
 
   return {
     servers: servers,
