@@ -9,9 +9,7 @@ angular.module('fhirDemoApp')
 angular.module('fhirDemoApp')
 .controller('MainCtrl', function ($scope, $routeParams) {
   var initialHash = $routeParams.initialHash;
-  FHIR.oauth2.ready(decodeURIComponent(initialHash), function(smart){
-    console.log('set STate', initialHash);
-
+  FHIR.oauth2.ready($routeParams, function(smart){
     var patient = smart.context.patient;
     var calls = {
       'Patient': patient.Patient.where,

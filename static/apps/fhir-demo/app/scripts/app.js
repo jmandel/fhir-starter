@@ -8,7 +8,7 @@ angular.module('fhirDemoApp', [
 ])
   .config(function ($routeProvider) {
     $routeProvider
-      .when('/given/:initialHash?', {
+      .when('/after-auth', {
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
       })
