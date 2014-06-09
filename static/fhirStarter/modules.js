@@ -19,6 +19,14 @@ angular.module('fhirStarter', ['ngAnimate', 'ngRoute','ngSanitize'], function($r
     templateUrl:'fhirStarter/templates/authorize-app.html',
   });
 
+  $routeProvider.when('/after-auth', {
+    templateUrl:'fhirStarter/templates/start.html',
+    controller: function(){
+    
+    }
+  });
+
+
   $locationProvider.html5Mode(false);
 
 });

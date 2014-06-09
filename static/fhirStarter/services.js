@@ -76,10 +76,12 @@ angular.module('fhirStarter').factory('oauth2', function($rootScope, $location) 
       return authorizing;
     },
     authorize: function(s){
+      var thisUri = window.location.origin + window.location.pathname +'/';
+      thisUrl = thisUri.replace(/\/+$/, "/");
       // TODO : remove registration step
       var client = {
         "client_id": "fhir_starter",
-        "redirect_uri": window.location.origin + window.location.pathname +'/',
+        "redirect_uri": thisUrl,
         "scope":  "smart/orchestrate_launch user/*.*"
       };
       authorizing = true;
@@ -93,17 +95,15 @@ angular.module('fhirStarter').factory('oauth2', function($rootScope, $location) 
 
 });
 
-angular.module('fhirStarter').factory('patientSearch', function($route, $routeParams, $location, $rootScope, $q, fhirSettings, oauth2) {
+angular.module('fhirStarter').factory('patientSearch', function($route, $routeParams, $location, $window, $rootScope, $q, fhirSettings, oauth2) {
 
   console.log('initialzing pt search service');
   var smart;
   var didOauth = false;
 
   function  getClient(){
-    if (window.initialHash !== undefined && window.initialHash != "" && !(window.initialHash.match(new RegExp('^%23%2F')))){
-      FHIR.oauth2.ready(decodeURIComponent(window.initialHash),
-      function(smartNew){
-        delete window.initialHash;
+    if ($routeParams.code){
+      FHIR.oauth2.ready($routeParams, function(smartNew){
         smart = smartNew;
         window.smaht = smart;
         didOauth = true;
@@ -117,7 +117,7 @@ angular.module('fhirStarter').factory('patientSearch', function($route, $routePa
           "type": "oauth2"
         }
       });
-    } else if (fhirSettings.get().auth.type == 'oauth2'){
+    } else if (fhirSettings.get().auth && fhirSettings.get().auth.type == 'oauth2'){
       oauth2.authorize(fhirSettings.get());
     } else {
       smart = new FHIR.client(fhirSettings.get());
@@ -128,8 +128,9 @@ angular.module('fhirStarter').factory('patientSearch', function($route, $routePa
    function onNewClient(){
       if (smart && smart.state && smart.state.from !== undefined){
         console.log(smart, 'back to from', smart.state.from);
-        return $location.url(smart.state.from);
-      } 
+        $location.url(smart.state.from);
+        $rootScope.$digest();
+      }
    }
 
   $rootScope.$on('$routeChangeSuccess', function (scope, next, current) {

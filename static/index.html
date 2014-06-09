@@ -16,7 +16,16 @@
     <script src="js/modernizr.js"></script>
 
     <script>
-      window.initialHash = encodeURIComponent(window.location.hash);
+      if (window.location.search.match("code=")){
+        var newHash = "/after-auth" + window.location.search;
+        if (window.history.replaceState){
+          window.history.replaceState(
+          {},
+          "",
+          window.location.toString().replace(window.location.search, ""));
+        }
+        window.location.hash = newHash;
+      }
     </script>
 
     <style type="text/css">
