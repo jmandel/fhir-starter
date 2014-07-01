@@ -36,6 +36,11 @@
       "redirect_uri": "http://localhost:8000/fhir-app/",
       "logo_uri": "http://sandbox.smartplatforms.org/static/smart_common/resources/images/app_icons_32/developers_sandbox.png"
     }, {
+      "client_name": "My Mobile App",
+      "client_id": "my_mobile_app",
+      "redirect_uri": "smartapp://callback",
+      "logo_uri": "http://sample-apps.smartplatforms.org/img/icons/myios.png"
+    }, {
       "client_name": "FHIR Starter",
       "client_id": "fhir_starter",
       "redirect_uri": "",
