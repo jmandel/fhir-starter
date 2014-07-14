@@ -30,6 +30,17 @@
       "redirect_uri": "apps/fhir-demo/app/",
       "logo_uri": "http://www.hl7.org/implement/standards/fhir/assets/images/fhir-logo-www.png"
     }, {
+      "client_name": "My Web App",
+      "client_id": "my_web_app",
+      "launch_uri": "http://localhost:8000/fhir-app/launch.html",
+      "redirect_uri": "http://localhost:8000/fhir-app/",
+      "logo_uri": "http://sandbox.smartplatforms.org/static/smart_common/resources/images/app_icons_32/developers_sandbox.png"
+    }, {
+      "client_name": "My Mobile App",
+      "client_id": "my_mobile_app",
+      "redirect_uri": "smartapp://callback",
+      "logo_uri": "http://sample-apps.smartplatforms.org/img/icons/myios.png"
+    }, {
       "client_name": "FHIR Starter",
       "client_id": "fhir_starter",
       "redirect_uri": "",
