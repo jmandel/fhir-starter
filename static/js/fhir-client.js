@@ -192,7 +192,10 @@ function isBypassOAuth(){
 }
 
 function bypassOAuth(fhirServiceUrl, callback){
-  callback && callback(noAuthFhirProvider(fhirServiceUrl));
+  callback && callback({
+    "oauth2": null,
+    "url": fhirServiceUrl || urlParam("fhirServiceUrl")
+  });
 }
 
 BBClient.authorize = function(params){
@@ -606,7 +609,7 @@ function FhirClient(p) {
 
     client.context.patient = {
       'read': function(){
-        return client.api.Patient.read(client.practitionerId);
+        return client.api.Patient.read(client.patientId);
       }
     };
 
