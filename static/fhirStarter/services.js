@@ -76,6 +76,11 @@ angular.module('fhirStarter').factory('oauth2', function($rootScope, $location) 
       return authorizing;
     },
     authorize: function(s){
+      // window.location.origin does not exist in some non-webkit browsers
+      if (!window.location.origin) {
+         window.location.origin = window.location.protocol+"//"+window.location.host;
+      }
+    
       var thisUri = window.location.origin + window.location.pathname +'/';
       thisUrl = thisUri.replace(/\/+$/, "/");
       // TODO : remove registration step
