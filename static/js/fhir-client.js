@@ -78,6 +78,7 @@ function completeCodeFlow(params){
   $.ajax({
 
     url: state.provider.oauth2.token_uri,
+    type: 'POST',
     data: {
       code: params.code,
       grant_type: 'authorization_code',
